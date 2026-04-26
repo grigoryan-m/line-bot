@@ -122,6 +122,7 @@ def push_main_menu(user_id: str, text: str, lang: str) -> bool:
                 btn("btn_manager", "menu:manager"),
                 btn("btn_about", "menu:about"),
                 btn("btn_socials", "menu:socials"),
+                btn("btn_help", "menu:help"),
                 btn("btn_change_lang", "menu:lang"),
             ]
         }

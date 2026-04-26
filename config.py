@@ -8,6 +8,8 @@ LINE_CHANNEL_ACCESS_TOKEN = os.getenv("LINE_CHANNEL_ACCESS_TOKEN", "")
 
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyBRR_WRhDRlVLKhgeA8Wfe-EjdQlO1MU5s")
+
 ODOO_URL = os.getenv("ODOO_URL", "")
 ODOO_API_TOKEN = os.getenv("ODOO_API_TOKEN", "")
 
