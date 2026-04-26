@@ -30,8 +30,19 @@ def set_state(user_id: str, state: Optional[str]):
     _users[user_id]["state"] = state
 
 
-def get_data(user_id: str) -> dict:
-    return _users.get(user_id, {}).get("data", {})
+def get_data(user_id: str, key: Optional[str] = None) -> Any:
+    data = _users.get(user_id, {}).get("data", {})
+    if key is not None:
+        return data.get(key)
+    return data
+
+
+def set_data(user_id: str, key: str, value: Any):
+    if user_id not in _users:
+        _users[user_id] = {}
+    if "data" not in _users[user_id]:
+        _users[user_id]["data"] = {}
+    _users[user_id]["data"][key] = value
 
 
 def update_data(user_id: str, **kwargs):

@@ -17,6 +17,12 @@ TEXTS = {
         "btn_main_menu": "🏠 Main menu",
         "btn_change_lang": "🌐 Change language",
         "loading": "⏳ Processing...",
+        "help_welcome": (
+            "🤖 AI Help Assistant\n\n"
+            "Hello! I'm your AI assistant powered by Gemini.\n"
+            "Ask me anything — I'm here to help!\n\n"
+            "Type your question below 👇"
+        ),
         "loyalty_hint": "Get your loyalty card in 30 seconds and receive a bonus 🎁",
         # Reminders
         "loyalty_reminder": "It takes 30 seconds to create a loyalty card for bonuses in every store",
@@ -110,6 +116,12 @@ TEXTS = {
         "btn_main_menu": "🏠 Главное меню",
         "btn_change_lang": "🌐 Сменить язык",
         "loading": "⏳ Загрузка...",
+        "help_welcome": (
+            "🤖 Помощник ИИ\n\n"
+            "Привет! Я ваш ИИ-ассистент на основе Gemini.\n"
+            "Задайте любой вопрос — я готов помочь!\n\n"
+            "Напишите ваш вопрос ниже 👇"
+        ),
         "loyalty_hint": "Получите карту лояльности за 30 секунд и получите бонус 🎁",
         "loyalty_reminder": "Создание карты лояльности для получения бонусов в любом магазине занимает 30 секунд",
         "after_phone_reminder": "Завершите регистрацию, чтобы активировать бонус",
@@ -184,6 +196,12 @@ TEXTS = {
         "btn_main_menu": "🏠 เมนูหลัก",
         "btn_change_lang": "🌐 เปลี่ยนภาษา",
         "loading": "⏳ กำลังประมวลผล...",
+        "help_welcome": (
+            "🤖 ผู้ช่วย AI\n\n"
+            "สวัสดี! ฉันคือผู้ช่วย AI ที่ขับเคลื่อนโดย Gemini\n"
+            "ถามอะไรก็ได้ — ฉันพร้อมช่วยคุณ!\n\n"
+            "พิมพ์คำถามด้านล่าง 👇"
+        ),
         "loyalty_hint": "รับบัตรสะสมแต้มใน 30 วินาทีและรับโบนัส 🎁",
         "loyalty_reminder": "ใช้เวลา 30 วินาทีในการสร้างบัตรสะสมแต้มเพื่อรับโบนัสในทุกร้าน",
         "after_phone_reminder": "ลงทะเบียนให้เสร็จสิ้นเพื่อเปิดใช้งานโบนัสของคุณ",
