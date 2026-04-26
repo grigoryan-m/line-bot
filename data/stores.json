@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "name": "Central Store Bangkok",
+    "address": "123 Sukhumvit Rd, Bangkok",
+    "region": "Bangkok",
+    "hours": "09:00 - 22:00",
+    "lat": 13.7367,
+    "lon": 100.5601,
+    "photo_url": null
+  },
+  {
+    "id": 2,
+    "name": "Phuket Branch",
+    "address": "456 Thepkasattri Rd, Phuket",
+    "region": "Phuket",
+    "hours": "10:00 - 21:00",
+    "lat": 7.8804,
+    "lon": 98.3923,
+    "photo_url": null
+  },
+  {
+    "id": 3,
+    "name": "Moscow Flagship",
+    "address": "ул. Тверская, 15, Москва",
+    "region": "Moscow",
+    "hours": "10:00 - 22:00",
+    "lat": 55.7617,
+    "lon": 37.6117,
+    "photo_url": null
+  },
+  {
+    "id": 4,
+    "name": "Лучший магазинчики",
+    "address": "Lertsami St, Tbilisi 0102",
+    "region": "Tbilisi",
+    "hours": "11:00 - 19:00",
+    "lat": 41.6740340012338,
+    "lon": 44.84692242965194,
+    "photo_url": null
+  }
+]
