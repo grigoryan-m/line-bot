@@ -27,6 +27,7 @@ from handlers.manager import (
 )
 from handlers.about import handle_about
 from handlers.socials import handle_socials
+from handlers.help import help_start, handle_help_message
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -51,6 +52,7 @@ LOYALTY_STATES = {
 }
 STORE_STATES = {"stores:waiting_geo", "stores:choosing_region"}
 MANAGER_STATES = {"manager:chatting"}
+HELP_STATES = {"help:chatting"}
 
 
 async def route_postback(user_id: str, data: str):
@@ -74,6 +76,10 @@ async def route_postback(user_id: str, data: str):
         await handle_about(user_id)
     elif data == "menu:socials":
         await handle_socials(user_id)
+    elif data == "menu:help":
+        await help_start(user_id)
+    elif data == "help:new_chat":
+        await help_start(user_id)
     elif data == "menu:lang":
         from utils.line_api import push_language_select
         push_language_select(user_id)
@@ -111,6 +117,8 @@ async def route_text(user_id: str, text: str):
         await handle_loyalty_input(user_id, text)
     elif state in MANAGER_STATES:
         await handle_manager_message(user_id, text)
+    elif state in HELP_STATES:
+        await handle_help_message(user_id, text)
     elif state in STORE_STATES:
         # В магазинах текст только для кнопок (регион выбирается через postback)
         # Но на случай если пользователь печатает вручную
