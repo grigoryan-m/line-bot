@@ -10,6 +10,7 @@ from utils import user_data as ud
 from utils.line_api import push_text, push_yes_no, push_back_to_menu, push_image
 from utils.otp import generate_otp, verify_otp, send_otp_sms
 from utils.odoo import register_customer
+from utils.api_client import register_channel
 
 logger = logging.getLogger(__name__)
 
@@ -172,6 +173,10 @@ async def _finalize(user_id: str, lang: str):
     if result is None:
         push_back_to_menu(user_id, t(lang, "loyalty_crm_error"), lang)
         return
+
+    # Успешная регистрация — привязываем LINE userId к телефону в BotsAPI
+    # чтобы API мог отправлять этому пользователю уведомления (отзывы и т.д.)
+    await register_channel(phone, user_id)
 
     messages = result.get("content", {}).get("messages", [])
     api_message = None

@@ -13,6 +13,7 @@ from contextlib import asynccontextmanager
 
 from config import LINE_CHANNEL_SECRET
 from utils import user_data as ud
+from utils.api_client import register_channel
 
 # Handlers
 from handlers.start import handle_start, handle_lang_select, handle_main_menu
@@ -110,6 +111,23 @@ async def route_text(user_id: str, text: str):
         return
     if text.strip() in {"/menu", "menu"}:
         await handle_main_menu(user_id)
+        return
+
+    # /bind <phone>  →  привязать LINE userId к номеру телефона в BotsAPI
+    if text.startswith("/bind"):
+        parts = text.split(maxsplit=1)
+        if len(parts) > 1:
+            phone = parts[1].strip()
+            ok = await register_channel(phone, user_id)
+            from utils.line_api import push_text
+            from utils.user_data import get_lang
+            lang = get_lang(user_id)
+            if ok:
+                push_text(user_id, "✅ Ваш аккаунт привязан! Теперь мы сможем присылать вам уведомления." if lang == "ru"
+                          else "✅ Account linked! We can now send you notifications.")
+            else:
+                push_text(user_id, "⚠️ Не удалось привязать аккаунт. Проверьте номер телефона и попробуйте снова." if lang == "ru"
+                          else "⚠️ Could not link account. Please check your phone number and try again.")
         return
 
     # FSM-состояния

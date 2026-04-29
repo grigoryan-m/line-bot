@@ -18,3 +18,7 @@ MANAGER_WORK_START = int(os.getenv("MANAGER_WORK_START", "10"))
 MANAGER_WORK_END = int(os.getenv("MANAGER_WORK_END", "18"))
 
 SOCIALS_URL = os.getenv("SOCIALS_URL", "https://example.com/socials")
+
+# ── BotsAPI connection ────────────────────────────────────────────────────────
+BOTS_API_URL = os.getenv("BOTS_API_URL", "http://localhost:8000")
+BOTS_API_KEY = os.getenv("BOTS_API_KEY", "")
