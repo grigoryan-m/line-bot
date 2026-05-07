@@ -1,7 +1,6 @@
 from config import SOCIALS_URL
 from locales.texts import t
 from utils import user_data as ud
-from utils.line_api import _send, LINE_PUSH_URL, HEADERS
 
 
 async def handle_socials(user_id: str):

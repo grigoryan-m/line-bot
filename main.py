@@ -1,12 +1,26 @@
 """
 LINE Bot — главный файл FastAPI.
 Вебхук принимает события LINE и маршрутизирует их в хендлеры.
+
+Также монтирует /odoo/purchase endpoint из webhook_api.py
+(точно так же, как Telegram-бот запускает webhook_api вместе с bot.py).
 """
+from dotenv import load_dotenv
+load_dotenv()
+
 import hmac
 import hashlib
 import base64
 import json
 import logging
+import os
+
+from fastapi import FastAPI, Request, Header, HTTPException
+
+import os
+print("TOKEN:", repr(os.getenv("LINE_CHANNEL_ACCESS_TOKEN")))
+print("TOKEN LENGTH:", len(os.getenv("LINE_CHANNEL_ACCESS_TOKEN", "")))
+print("TOKEN START:", os.getenv("LINE_CHANNEL_ACCESS_TOKEN", "")[:20])
 
 from fastapi import FastAPI, Request, Header, HTTPException
 from contextlib import asynccontextmanager
@@ -30,10 +44,18 @@ from handlers.about import handle_about
 from handlers.socials import handle_socials
 from handlers.help import help_start, handle_help_message
 
+# ── Подключаем Odoo purchase webhook ──────────────────────────────────────────
+# Импортируем app из webhook_api и монтируем его роуты в основной FastAPI app.
+# Это аналог того, как Telegram-бот запускает webhook_api рядом с ботом.
+import webhook_api as _wh_module
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="LINE Bot")
+
+# Монтируем все роуты из webhook_api (/odoo/purchase, /health) в основной app
+app.include_router(_wh_module.app.router)
 
 
 # ─── Signature verification ────────────────────────────────────────────────
@@ -58,15 +80,12 @@ HELP_STATES = {"help:chatting"}
 
 async def route_postback(user_id: str, data: str):
     """Маршрутизация postback-событий (нажатия на кнопки)."""
-    # Выбор языка
     if data.startswith("lang:"):
         await handle_lang_select(user_id, data.split(":")[1])
 
-    # Главное меню
     elif data == "menu:main":
         await handle_main_menu(user_id)
 
-    # Разделы главного меню
     elif data == "menu:stores":
         await stores_start(user_id)
     elif data == "menu:loyalty":
@@ -85,18 +104,15 @@ async def route_postback(user_id: str, data: str):
         from utils.line_api import push_language_select
         push_language_select(user_id)
 
-    # Stores
     elif data == "stores:choose_region":
         await handle_choose_region(user_id)
     elif data.startswith("region:"):
         region = data.split(":", 1)[1]
         await handle_region_select(user_id, region)
 
-    # Loyalty (да/нет)
     elif data in {"tourist:yes", "tourist:no", "thai_citizen:yes", "thai_citizen:no"}:
         await handle_loyalty_postback(user_id, data)
 
-    # Manager
     elif data == "manager:transfer":
         await handle_manager_transfer(user_id)
 
@@ -105,7 +121,6 @@ async def route_text(user_id: str, text: str):
     """Маршрутизация текстовых сообщений в зависимости от состояния."""
     state = ud.get_state(user_id)
 
-    # Команды
     if text.strip() in {"/start", "start"}:
         await handle_start(user_id)
         return
@@ -119,6 +134,13 @@ async def route_text(user_id: str, text: str):
         if len(parts) > 1:
             phone = parts[1].strip()
             ok = await register_channel(phone, user_id)
+
+            # Также сохраняем в локальный реестр для Odoo webhook
+            from utils.line_registry import bind as registry_bind
+            from webhook_api import flush_pending
+            registry_bind(phone, user_id)
+            flush_pending(phone)
+
             from utils.line_api import push_text
             from utils.user_data import get_lang
             lang = get_lang(user_id)
@@ -130,7 +152,6 @@ async def route_text(user_id: str, text: str):
                           else "⚠️ Could not link account. Please check your phone number and try again.")
         return
 
-    # FSM-состояния
     if state in LOYALTY_STATES:
         await handle_loyalty_input(user_id, text)
     elif state in MANAGER_STATES:
@@ -138,14 +159,11 @@ async def route_text(user_id: str, text: str):
     elif state in HELP_STATES:
         await handle_help_message(user_id, text)
     elif state in STORE_STATES:
-        # В магазинах текст только для кнопок (регион выбирается через postback)
-        # Но на случай если пользователь печатает вручную
         lang = ud.get_lang(user_id)
         from locales.texts import t
         from utils.line_api import push_main_menu
         push_main_menu(user_id, t(lang, "main_menu"), lang)
     else:
-        # Нет активного состояния — показываем меню
         await handle_main_menu(user_id)
 
 
@@ -169,7 +187,6 @@ async def webhook(request: Request, x_line_signature: str = Header(None)):
         if not user_id:
             continue
 
-        # ── Текстовое сообщение ──────────────────────────────────────────
         if event_type == "message":
             message = event.get("message", {})
             msg_type = message.get("type")
@@ -186,13 +203,11 @@ async def webhook(request: Request, x_line_signature: str = Header(None)):
                 if lat and lon:
                     await handle_location(user_id, lat, lon)
 
-        # ── Postback (нажатие кнопки) ────────────────────────────────────
         elif event_type == "postback":
             postback_data = event.get("postback", {}).get("data", "")
             logger.info(f"[{user_id}] postback: {postback_data}")
             await route_postback(user_id, postback_data)
 
-        # ── Follow (новый подписчик) ─────────────────────────────────────
         elif event_type == "follow":
             logger.info(f"[{user_id}] new follower")
             await handle_start(user_id)

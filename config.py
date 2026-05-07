@@ -22,3 +22,10 @@ SOCIALS_URL = os.getenv("SOCIALS_URL", "https://example.com/socials")
 # ── BotsAPI connection ────────────────────────────────────────────────────────
 BOTS_API_URL = os.getenv("BOTS_API_URL", "http://localhost:8000")
 BOTS_API_KEY = os.getenv("BOTS_API_KEY", "")
+
+# ── Odoo Purchase Webhook ─────────────────────────────────────────────────────
+# Секрет для защиты POST /odoo/purchase (передаётся в X-API-Key заголовке)
+WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET", "")
+
+# Задержка перед отправкой благодарственного сообщения (секунды, по умолчанию 1 час)
+THANK_YOU_DELAY_SECONDS = int(os.getenv("THANK_YOU_DELAY_SECONDS", str(60 * 60)))
