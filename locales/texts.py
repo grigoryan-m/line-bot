@@ -73,6 +73,8 @@ TEXTS = {
         "stores_result": "📍 Nearest stores ({count} found):",
         "btn_open_maps": "🗺 Open in Google Maps",
         "store_card": "🏪 {name}\n📍 {address}\n🕐 {hours}\n",
+        "btn_help": "🤖 AI Help",
+        "btn_help_new_chat": "🔄 New chat",
         # Manager
         "manager_hello": (
             "💬 Manager Chat\n\n"
@@ -143,6 +145,8 @@ TEXTS = {
         "loyalty_ask_thai_citizen": "🇹🇭 Вы гражданин Таиланда?\n\nОтветьте: да / нет",
         "btn_yes": "✅ Да",
         "btn_no": "❌ Нет",
+        "btn_help": "🤖 Помощник ИИ",
+        "btn_help_new_chat": "🔄 Новый чат",
         "loyalty_success": (
             "🎉 Регистрация успешна!\n\n"
             "📱 Телефон: {phone}\n"
@@ -252,6 +256,9 @@ TEXTS = {
         "manager_left_message": "✅ บันทึกข้อความแล้ว เราจะติดต่อกลับ!",
         "btn_transfer_manager": "👤 คุยกับคนจริงๆ",
         "ai_error": "⚠️ AI ไม่พร้อมใช้งานชั่วคราว กำลังเชื่อมต่อผู้จัดการ...",
+        "btn_help": "🤖 ผู้ช่วย AI",
+        "btn_help_new_chat": "🔄 แชทใหม่",
+
         "about_text": (
             "ℹ️ เกี่ยวกับเรา\n\n"
             "เราเป็นบริษัทค้าปลีกชั้นนำที่มีสินค้าคุณภาพ\n\n"

@@ -2,25 +2,31 @@
 LINE Messaging API helpers.
 Заменяет aiogram — отправка сообщений, кнопок, геолокации через push/reply.
 """
+import os
 import requests
 import logging
 from typing import Optional
-from config import LINE_CHANNEL_ACCESS_TOKEN
 
 logger = logging.getLogger(__name__)
 
 LINE_PUSH_URL = "https://api.line.me/v2/bot/message/push"
 LINE_REPLY_URL = "https://api.line.me/v2/bot/message/reply"
 
-HEADERS = {
-    "Authorization": f"Bearer {LINE_CHANNEL_ACCESS_TOKEN}",
-    "Content-Type": "application/json",
-}
+
+def _headers() -> dict:
+    """Читаем токен при каждом запросе — чтобы не зависеть от порядка импортов."""
+    token = os.getenv("LINE_CHANNEL_ACCESS_TOKEN", "")
+    print("HEADERS TOKEN:", repr(token[:20]))  # временно
+    return {
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/json",
+    }
+    
 
 
 def _send(url: str, payload: dict) -> bool:
     try:
-        r = requests.post(url, headers=HEADERS, json=payload, timeout=10)
+        r = requests.post(url, headers=_headers(), json=payload, timeout=10)
         if r.status_code != 200:
             logger.error(f"LINE API error {r.status_code}: {r.text}")
             return False
