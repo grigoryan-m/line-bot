@@ -10,6 +10,9 @@ from utils import user_data as ud
 from utils.line_api import push_text, push_yes_no, push_back_to_menu, push_image
 from utils.otp import generate_otp, verify_otp, send_otp_sms
 from utils.odoo import register_customer
+from utils.api_client import register_channel
+from utils.line_registry import bind as registry_bind   # ← новое
+from webhook_api import flush_pending                    # ← новое
 
 logger = logging.getLogger(__name__)
 
@@ -109,7 +112,6 @@ async def _process_name(user_id: str, name: str, lang: str):
 async def _process_country(user_id: str, country: str, lang: str):
     ud.update_data(user_id, country=country.strip())
     ud.set_state(user_id, "loyalty:tourist")
-    # Quick Reply кнопки Да/Нет
     push_yes_no(user_id, t(lang, "loyalty_ask_tourist"), lang, "tourist:yes", "tourist:no")
 
 
@@ -172,6 +174,15 @@ async def _finalize(user_id: str, lang: str):
     if result is None:
         push_back_to_menu(user_id, t(lang, "loyalty_crm_error"), lang)
         return
+
+    # Привязываем LINE userId к телефону в BotsAPI (для review-запросов и т.д.)
+    await register_channel(phone, user_id)
+
+    # Привязываем LINE userId к телефону локально (для Odoo purchase webhook)
+    registry_bind(phone, user_id)   # ← новое: сохраняем phone → line_user_id
+
+    # Отправляем отложенные purchase-уведомления, если они уже пришли от Odoo
+    flush_pending(phone)             # ← новое: обрабатываем pending-очередь
 
     messages = result.get("content", {}).get("messages", [])
     api_message = None
