@@ -1,42 +1,222 @@
 [
-  {
-    "id": 1,
-    "name": "Central Store Bangkok",
-    "address": "123 Sukhumvit Rd, Bangkok",
-    "region": "Bangkok",
-    "hours": "09:00 - 22:00",
-    "lat": 13.7367,
-    "lon": 100.5601,
-    "photo_url": null
-  },
-  {
-    "id": 2,
-    "name": "Phuket Branch",
-    "address": "456 Thepkasattri Rd, Phuket",
-    "region": "Phuket",
-    "hours": "10:00 - 21:00",
-    "lat": 7.8804,
-    "lon": 98.3923,
-    "photo_url": null
-  },
-  {
-    "id": 3,
-    "name": "Moscow Flagship",
-    "address": "ул. Тверская, 15, Москва",
-    "region": "Moscow",
-    "hours": "10:00 - 22:00",
-    "lat": 55.7617,
-    "lon": 37.6117,
-    "photo_url": null
-  },
-  {
-    "id": 4,
-    "name": "Лучший магазинчики",
-    "address": "Lertsami St, Tbilisi 0102",
-    "region": "Tbilisi",
-    "hours": "11:00 - 19:00",
-    "lat": 41.6740340012338,
-    "lon": 44.84692242965194,
-    "photo_url": null
-  }
+    {
+        "id": 1,
+        "name": "PK 015 BangTao Laundry",
+        "address": "BangTao Laundry, Phuket",
+        "region": "Phuket",
+        "hours": "12:00 - 24:00",
+        "lat": 7.993017670812603,
+        "lon": 98.30650102775282,
+        "photo_url": null
+    },
+    {
+        "id": 2,
+        "name": "PK 018 BangTao BoatAvenue",
+        "address": "BangTao BoatAvenue, Phuket",
+        "region": "Phuket",
+        "hours": "12:00 - 24:00",
+        "lat": 7.993570149921621,
+        "lon": 98.3054281441712,
+        "photo_url": null
+    },
+    {
+        "id": 3,
+        "name": "PK 023 BangTao Laguna",
+        "address": "BangTao Laguna, Phuket",
+        "region": "Phuket",
+        "hours": "24/7",
+        "lat": 7.997437482735204,
+        "lon": 98.30431234524632,
+        "photo_url": null
+    },
+    {
+        "id": 4,
+        "name": "PK 027 Patong Bangla",
+        "address": "Patong Bangla, Phuket",
+        "region": "Phuket",
+        "hours": "12:00 - 03:00",
+        "lat": 7.894956978513814,
+        "lon": 98.2955013258485,
+        "photo_url": null
+    },
+    {
+        "id": 5,
+        "name": "PK 013 Patong Beachfront",
+        "address": "Patong Beachfront, Phuket",
+        "region": "Phuket",
+        "hours": "12:00 - 24:00",
+        "lat": 7.888730190806,
+        "lon": 98.29181578722157,
+        "photo_url": null
+    },
+    {
+        "id": 6,
+        "name": "PK 007 Patong Banzaan",
+        "address": "Patong Banzaan, Phuket",
+        "region": "Phuket",
+        "hours": "12:00 - 24:00",
+        "lat": 7.891771250926323,
+        "lon": 98.30125708560891,
+        "photo_url": null
+    },
+    {
+        "id": 7,
+        "name": "PK 021 Patong Sainamyen",
+        "address": "Patong Sainamyen, Phuket",
+        "region": "Phuket",
+        "hours": "13:00 - 01:00",
+        "lat": 7.897764962422976,
+        "lon": 98.30035586340034,
+        "photo_url": null
+    },
+    {
+        "id": 8,
+        "name": "PK 006 Patong OTOP",
+        "address": "Patong OTOP, Phuket",
+        "region": "Phuket",
+        "hours": "13:00 - 01:00",
+        "lat": 7.887454912445379,
+        "lon": 98.29550650674231,
+        "photo_url": null
+    },
+    {
+        "id": 9,
+        "name": "PK 020 Karon Patak",
+        "address": "Karon Patak, Phuket",
+        "region": "Phuket",
+        "hours": "13:00 - 01:00",
+        "lat": 7.829539398061601,
+        "lon": 98.2955174311626,
+        "photo_url": null
+    },
+    {
+        "id": 10,
+        "name": "PK 034 Karon Patak2",
+        "address": "Karon Patak 2, Phuket",
+        "region": "Phuket",
+        "hours": "12:00 - 24:00",
+        "lat": 7.848917979852183,
+        "lon": 98.29441271534327,
+        "photo_url": null
+    },
+    {
+        "id": 11,
+        "name": "PK 024 KoKaeo RoyalMarina",
+        "address": "KoKaeo RoyalMarina, Phuket",
+        "region": "Phuket",
+        "hours": "08:00 - 20:00",
+        "lat": 7.967300831935918,
+        "lon": 98.39091038650743,
+        "photo_url": null
+    },
+    {
+        "id": 12,
+        "name": "PK 017 Rawai Beachfront",
+        "address": "Rawai Beachfront, Phuket",
+        "region": "Phuket",
+        "hours": "12:00 - 24:00",
+        "lat": 7.773371425994025,
+        "lon": 98.32321477116417,
+        "photo_url": null
+    },
+    {
+        "id": 13,
+        "name": "PK 030 Rawai Beachfront2",
+        "address": "Rawai Beachfront 2, Phuket",
+        "region": "Phuket",
+        "hours": "12:00 - 24:00",
+        "lat": 7.774546604388935,
+        "lon": 98.32544845767163,
+        "photo_url": null
+    },
+    {
+        "id": 14,
+        "name": "PK 026 Rawai Wine",
+        "address": "Rawai Wine, Phuket",
+        "region": "Phuket",
+        "hours": "11:00 - 23:00",
+        "lat": 7.7888320971451686,
+        "lon": 98.3173156846567,
+        "photo_url": null
+    },
+    {
+        "id": 15,
+        "name": "PK 036 Chalong SoiTaied",
+        "address": "Chalong SoiTaied, Phuket",
+        "region": "Phuket",
+        "hours": "Unknown",
+        "lat": 7.851122193678278,
+        "lon": 98.3496403981493,
+        "photo_url": null
+    },
+    {
+        "id": 16,
+        "name": "PK 009 Kata India",
+        "address": "Kata India, Phuket",
+        "region": "Phuket",
+        "hours": "12:00 - 24:00",
+        "lat": 7.829574648232492,
+        "lon": 98.29548927504217,
+        "photo_url": null
+    },
+    {
+        "id": 17,
+        "name": "PK 010 Kata Dive",
+        "address": "Kata Dive, Phuket",
+        "region": "Phuket",
+        "hours": "12:00 - 24:00",
+        "lat": 7.826102647981622,
+        "lon": 98.29666105545992,
+        "photo_url": null
+    },
+    {
+        "id": 18,
+        "name": "PK 031 Kata Koktanod",
+        "address": "Kata Koktanod, Phuket",
+        "region": "Phuket",
+        "hours": "12:00 - 24:00",
+        "lat": 7.815818429359399,
+        "lon": 98.3005650093694,
+        "photo_url": null
+    },
+    {
+        "id": 19,
+        "name": "PK 032 Kata Taina (CLINIC)",
+        "address": "Kata Taina, Phuket",
+        "region": "Phuket",
+        "hours": "12:00 - 24:00",
+        "lat": 7.826612835181151,
+        "lon": 98.2973691586238,
+        "photo_url": null
+    },
+    {
+        "id": 20,
+        "name": "PK 033 Kata KataRoad",
+        "address": "Kata Road, Phuket",
+        "region": "Phuket",
+        "hours": "12:00 - 24:00",
+        "lat": 7.82457410452887,
+        "lon": 98.29772423796642,
+        "photo_url": null
+    },
+    {
+        "id": 21,
+        "name": "PK 025 PhuketTown ThalangBlue",
+        "address": "Phuket Town Thalang Blue, Phuket",
+        "region": "Phuket",
+        "hours": "Unknown",
+        "lat": 7.891245711568724,
+        "lon": 98.39085483450937,
+        "photo_url": null
+    },
+    {
+        "id": 22,
+        "name": "Kamala Mainroad",
+        "address": "Kamala Mainroad, Phuket",
+        "region": "Phuket",
+        "hours": "12:00 - 24:00",
+        "lat": 7.961746560805373,
+        "lon": 98.27937489844726,
+        "photo_url": null
+    }
 ]
