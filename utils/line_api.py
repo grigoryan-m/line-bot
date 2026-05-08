@@ -217,32 +217,61 @@ def push_regions(user_id: str, text: str, lang: str, regions: list[str]) -> bool
 
 
 def push_store_card(user_id: str, store: dict, lang: str) -> bool:
-    """Карточка магазина с кнопкой открыть в картах."""
     from locales.texts import t
-    maps_url = f"https://www.google.com/maps?q={store['lat']},{store['lon']}"
-    card_text = t(lang, "store_card",
-                  name=store["name"],
-                  address=store["address"],
-                  hours=store["hours"])
-    dist = store.get("distance_km")
-    if dist is not None:
-        card_text += f"📏 {dist} km"
-    card_text += t(lang, "show_card_hint")
+    
+    maps_url = f"https://www.google.com/maps/search/?api=1&query={store['lat']},{store['lon']}"
+    
+    # Тексты
+    title = store["name"]
+    address = f"📍 {store['address']}"
+    hours = f"🕐 {store['hours']}"
+    dist_text = f"📏 {store.get('distance_km')} km" if store.get('distance_km') else ""
+    hint = t(lang, "show_card_hint")
+
+    flex_contents = {
+        "type": "bubble",
+        "size": "mega",
+        "body": {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+                {"type": "text", "text": title, "weight": "bold", "size": "xl", "wrap": True},
+                {"type": "box", "layout": "vertical", "margin": "lg", "spacing": "sm", "contents": [
+                    {"type": "text", "text": address, "wrap": True, "size": "sm", "color": "#666666"},
+                    {"type": "text", "text": hours, "size": "sm", "color": "#666666"},
+                    {"type": "text", "text": dist_text, "size": "sm", "weight": "bold", "color": "#000000"}
+                ]},
+                {"type": "text", "text": hint, "margin": "lg", "size": "xs", "color": "#aaaaaa", "wrap": True}
+            ]
+        },
+        "footer": {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+                {
+                    "type": "button",
+                    "action": {
+                        "type": "uri",
+                        "label": t(lang, "btn_open_maps")[:20],
+                        "uri": maps_url
+                    },
+                    "style": "primary",
+                    "color": "#05c46b"
+                }
+            ]
+        }
+    }
 
     return _send(LINE_PUSH_URL, {
         "to": user_id,
-        "messages": [{
-            "type": "text",
-            "text": card_text,
-            "quickReply": {
-                "items": [{
-                    "type": "action",
-                    "action": {"type": "uri", "label": t(lang, "btn_open_maps"), "uri": maps_url}
-                }]
+        "messages": [
+            {
+                "type": "flex",
+                "altText": f"Store: {title}",
+                "contents": flex_contents
             }
-        }]
+        ]
     })
-
 
 def push_manager_menu(user_id: str, text: str, lang: str) -> bool:
     """Меню чата с менеджером: кнопки 'Человек' и 'Главное меню'."""
