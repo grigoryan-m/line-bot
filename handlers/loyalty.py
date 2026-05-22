@@ -4,6 +4,9 @@
 """
 import re
 import logging
+import requests
+import hashlib
+import time
 
 from locales.texts import t
 from utils import user_data as ud
@@ -13,10 +16,12 @@ from utils.odoo import register_customer
 from utils.api_client import register_channel
 from utils.line_registry import bind as registry_bind   # ← новое
 from webhook_api import flush_pending                    # ← новое
+from config import PIXEL_ID, ACCESS_TOKEN
 
 logger = logging.getLogger(__name__)
 
 PHONE_REGEX = re.compile(r"^\+?[1-9]\d{7,14}$")
+META_ADS_URL = f"https://graph.facebook.com/v19.0/{PIXEL_ID}/events"
 
 
 async def loyalty_start(user_id: str):
@@ -201,3 +206,31 @@ async def _finalize(user_id: str, lang: str):
     if not api_message:
         logger.error(f"Unexpected Odoo API response: {result}")
         push_back_to_menu(user_id, t(lang, "loyalty_crm_error"), lang)
+
+    send_meta_ads_info(phone)
+
+
+def send_meta_ads_info(phone: str):
+    """Send CompleteRegistration event to Meta Ads Manager."""
+    payload = {
+        "data": [
+            {
+                "event_name": "CompleteRegistration",
+                "event_time": int(time.time()),
+                "action_source": "system_generated",
+                "user_data": {
+                    "ph": hashlib.sha256(phone.encode()).hexdigest()
+                },
+            }
+        ]
+    }
+    try:
+        response = requests.post(
+            META_ADS_URL,
+            params={"access_token": ACCESS_TOKEN},
+            json=payload,
+            timeout=10,
+        )
+        logger.info(f"[MetaAds] Response: {response.json()}")
+    except Exception as e:
+        logger.error(f"[MetaAds] Failed to send event: {e}")

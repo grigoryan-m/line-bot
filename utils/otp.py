@@ -3,6 +3,10 @@ import logging
 import time
 from typing import Dict, Tuple, Optional
 
+from twilio.rest import Client
+
+from config import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_FROM_NUMBER
+
 logger = logging.getLogger(__name__)
 
 # In-memory OTP store: {phone: (otp, timestamp, attempts)}
@@ -16,7 +20,6 @@ def generate_otp(phone: str) -> str:
     """Generate and store OTP for phone number."""
     otp = str(random.randint(100000, 999999))
     _otp_store[phone] = (otp, time.time(), 0)
-    logger.info(f"[OTP] Generated for {phone}: {otp}")  # Remove in production!
     return otp
 
 
@@ -51,13 +54,16 @@ def verify_otp(phone: str, entered: str) -> Tuple[bool, str]:
 
 
 def send_otp_sms(phone: str, otp: str) -> bool:
-    """
-    Send OTP via SMS.
-    TODO: Replace with real SMS provider (Twilio, AWS SNS, etc.)
-    """
-    logger.info(f"[SMS] Sending OTP {otp} to {phone}")
-    # Example with Twilio:
-    # from twilio.rest import Client
-    # client = Client(TWILIO_SID, TWILIO_TOKEN)
-    # client.messages.create(to=phone, from_=TWILIO_FROM, body=f"Your OTP: {otp}")
-    return True
+    """Send OTP via Twilio SMS."""
+    try:
+        client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+        client.messages.create(
+            to=phone,
+            from_=TWILIO_FROM_NUMBER,
+            body=f"Your verification code: {otp}. Valid for {OTP_TTL // 60} minutes.",
+        )
+        logger.info(f"[SMS] OTP sent to {phone}")
+        return True
+    except Exception as e:
+        logger.error(f"[SMS] Failed to send OTP to {phone}: {e}")
+        return False
