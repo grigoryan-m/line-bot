@@ -29,3 +29,12 @@ WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET", "")
 
 # Задержка перед отправкой благодарственного сообщения (секунды, по умолчанию 1 час)
 THANK_YOU_DELAY_SECONDS = int(os.getenv("THANK_YOU_DELAY_SECONDS", str(60 * 60)))
+
+# ── Twilio (OTP SMS) ──────────────────────────────────────────────────────────
+TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID", "")
+TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN", "")
+TWILIO_FROM_NUMBER = os.getenv("TWILIO_PHONE", "")
+
+# ── Meta Ads Manager ──────────────────────────────────────────────────────────
+PIXEL_ID = os.getenv("META_ADS_PIXEL_ID", "")
+ACCESS_TOKEN = os.getenv("META_ADS_ACCESS_TOKEN", "")

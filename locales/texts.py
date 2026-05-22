@@ -71,7 +71,7 @@ TEXTS = {
         "stores_choose_region": "Please select your region:",
         "stores_not_found": "😔 No stores found nearby. Try a different region.",
         "stores_result": "📍 Nearest stores ({count} found):",
-        "btn_open_maps": "🗺 Open in Google Maps",
+        "btn_open_maps": "🗺 Google Maps",
         "store_card": "🏪 {name}\n📍 {address}\n🕐 {hours}\n",
         "btn_help": "🤖 AI Help",
         "btn_help_new_chat": "🔄 New chat",
@@ -167,7 +167,7 @@ TEXTS = {
         "stores_choose_region": "Выберите ваш регион:",
         "stores_not_found": "😔 Магазины не найдены. Попробуйте другой регион.",
         "stores_result": "📍 Ближайшие магазины ({count} найдено):",
-        "btn_open_maps": "🗺 Открыть в Google Maps",
+        "btn_open_maps": "🗺 Google Maps",
         "store_card": "🏪 {name}\n📍 {address}\n🕐 {hours}\n",
         "manager_hello": "💬 Чат с менеджером\n\nНаш AI-ассистент ответит вам первым.\nЗадайте вопрос:",
         "manager_offline": "🕐 Менеджеры работают с 10:00 до 18:00.\n\nОставьте сообщение, и мы свяжемся с вами:",
@@ -179,7 +179,6 @@ TEXTS = {
         "about_text": (
             "ℹ️ О нас\n\n"
             "Мы ведущая розничная компания, предлагающая качественные товары.\n\n"
-            "🌐 Наши магазины расположены в нескольких странах.\n"
             "📞 Поддержка: доступна 24/7 через этот бот."
         ),
         "socials_text": "📲 Наши социальные сети\n\nПерейдите на нашу страницу со всеми ссылками:",
@@ -247,7 +246,7 @@ TEXTS = {
         "stores_choose_region": "เลือกภูมิภาคของคุณ:",
         "stores_not_found": "😔 ไม่พบร้านค้าในบริเวณนี้ ลองภูมิภาคอื่น",
         "stores_result": "📍 ร้านค้าใกล้เคียง ({count} แห่ง):",
-        "btn_open_maps": "🗺 เปิดใน Google Maps",
+        "btn_open_maps": "🗺 Google Maps",
         "store_card": "🏪 {name}\n📍 {address}\n🕐 {hours}\n",
         "manager_hello": "💬 แชทกับผู้จัดการ\n\nผู้ช่วย AI จะตอบคุณก่อน\nพิมพ์คำถามของคุณ:",
         "manager_offline": "🕐 ผู้จัดการทำงานตั้งแต่ 10:00 - 18:00\n\nฝากข้อความได้เลย:",
