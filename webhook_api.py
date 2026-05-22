@@ -1,33 +1,3 @@
-"""
-webhook_api.py
-FastAPI-эндпоинт, принимающий вебхуки от Odoo CRM при покупке товара.
-
-Полный аналог Telegram-версии webhook_api.py, адаптированный для LINE.
-
-Запускается ВМЕСТЕ с основным LINE-ботом из main.py (оба используют
-один и тот же объект FastAPI `app`, зарегистрированный в main.py).
-
-Endpoint:
-    POST /odoo/purchase
-    Header: X-API-Key: <WEBHOOK_SECRET>
-
-Payload (JSON):
-{
-    "phone":         "+66812345678",   // обязательно
-    "customer_name": "Иван Иванов",    // обязательно
-    "product_name":  "WeedeN Gold",    // обязательно
-    "order_id":      "SO-1234",        // опционально, для логов
-    "lang":          "ru"              // опционально, по умолчанию "en"
-}
-
-После получения:
-1. Ищет LINE userId пользователя по телефону в локальном реестре.
-2. Планирует отправку благодарственного сообщения через 1 час.
-3. Если userId не найден — сохраняет задачу, повторит когда пользователь
-   зарегистрируется через loyalty-флоу (после регистрации вызывается
-   flush_pending из handlers/loyalty.py).
-"""
-
 import asyncio
 import logging
 import os
@@ -41,87 +11,100 @@ from pydantic import BaseModel, field_validator
 logger = logging.getLogger(__name__)
 
 # ─── FastAPI app ──────────────────────────────────────────────────────────────
-app = FastAPI(title="WeedeN LINE Bot Webhook API", version="1.0.0")
+app = FastAPI(title="WeedeN LINE Bot Webhook API", version="1.1.0")
 
-# ─── Секрет для защиты endpoint'а (берётся из env) ───────────────────────────
+# ─── Секрет для защиты endpoint'а ─────────────────────────────────────────────
 WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET", "")
 
-# ─── Отложенные задачи для userId которые ещё не найдены ─────────────────────
-# { normalized_phone: [{"lang": ..., "product_name": ..., "order_id": ..., "ts": ...}, ...] }
+# ─── Отложенные задачи ────────────────────────────────────────────────────────
 _pending: dict[str, list[dict]] = {}
 
+# ─── Конфигурация задержек ────────────────────────────────────────────────────
+# Сообщение 1: Через 10 минут (600 секунд)
+THANK_YOU_DELAY = int(os.getenv("THANK_YOU_DELAY_SECONDS", str(10 * 60)))
+# Сообщение 2: Через 24 часа (86400 секунд)
+RETENTION_DELAY = int(os.getenv("RETENTION_DELAY_SECONDS", str(24 * 60 * 60)))
 
-# ─── Тексты благодарственного сообщения (идентично Telegram-версии) ───────────
-_THANK_YOU: dict[str, str] = {
-    "en": (
-        "🛍 Thank you for purchasing {product_name}!\n\n"
-        "We hope you enjoy it and look forward to seeing you again. 🙏\n\n"
-        "— WeedeN team"
-    ),
-    "ru": (
-        "🛍 Спасибо, что приобрели {product_name}!\n\n"
-        "Надеемся увидеть вас ещё раз. Будем рады встрече! 🙏\n\n"
-        "— Команда WeedeN"
-    ),
-    "thai": (
-        "🛍 ขอบคุณที่ซื้อ {product_name}!\n\n"
-        "หวังว่าจะได้พบคุณอีกครั้ง 🙏\n\n"
-        "— ทีม WeedeN"
-    ),
+# ─── Тексты сообщений ─────────────────────────────────────────────────────────
+MESSAGES = {
+    "thank_you": {
+        "ru": (
+            "🛍 Спасибо за покупку в WeedeN 🌿!\n\n"
+            "Мы тщательно отбираем каждый продукт и будем рады видеть вас снова за новым опытом и любимыми позициями. 🙏\n\n"
+            "— Команда WeedeN"
+        ),
+        "en": (
+            "🛍 Thank you for your purchase at WeedeN 🌿!\n\n"
+            "We carefully select every product and look forward to seeing you again for new experiences and your favorite items. 🙏\n\n"
+            "— WeedeN Team"
+        ),
+        "thai": (
+            "🛍 ขอบคุณสำหรับการซื้อสินค้าที่ WeedeN 🌿!\n\n"
+            "เราคัดสรรทุกผลิตภัณฑ์อย่างพิถีพิถัน และยินดีที่จะต้อนรับคุณอีกครั้งเพื่อสัมผัสประสบการณ์ใหม่ๆ และสินค้าที่คุณชื่นชอบ 🙏\n\n"
+            "— ทีมงาน WeedeN"
+        ),
+    },
+    "retention": {
+        "ru": (
+            "Спасибо за то, что вы уже попробовали продукты WeedeN! 🌿\n\n"
+            "Теперь самое время открыть для себя новые фавориты — у нас как раз появились позиции, которые точно стоят второго визита. Приходите!"
+        ),
+        "en": (
+            "Thank you for trying WeedeN products! 🌿\n\n"
+            "Now is the perfect time to discover new favorites — we've just added some items that are definitely worth a second visit. Come by and check them out!"
+        ),
+        "thai": (
+            "ขอบคุณที่ไว้วางใจเลือกใช้ผลิตภัณฑ์ของ WeedeN! 🌿\n\n"
+            "ตอนนี้เป็นเวลาที่เหมาะที่สุดในการค้นหาสินค้าชิ้นโปรดใหม่ๆ เราเพิ่งมีสินค้าใหม่เข้ามาซึ่งคุ้มค่ากับการกลับมาเยี่ยมชมเป็นครั้งที่สองแน่นอน แล้วแวะมานะครับ!"
+        ),
+    }
 }
 
-THANK_YOU_DELAY = int(os.getenv("THANK_YOU_DELAY_SECONDS", str(60 * 60)))  # 1 час
+
+def _build_message(msg_type: str, lang: str) -> str:
+    templates = MESSAGES.get(msg_type, MESSAGES["thank_you"])
+    return templates.get(lang, templates["en"])
 
 
-def _build_message(lang: str, product_name: str) -> str:
-    template = _THANK_YOU.get(lang, _THANK_YOU["en"])
-    return template.format(product_name=product_name)
-
-
-async def _schedule_thank_you(
+async def _send_delayed_message(
     line_user_id: str,
     lang: str,
-    product_name: str,
-    order_id: Optional[str],
-    delay: int = THANK_YOU_DELAY,
+    msg_type: str,
+    delay: int,
+    order_id: Optional[str] = None
 ):
-    """Ждёт delay секунд, затем отправляет благодарственное сообщение через LINE push."""
-    logger.info(
-        "Scheduled thank-you for line_user_id=%s, product=%s, delay=%ds, order=%s",
-        line_user_id, product_name, delay, order_id,
-    )
-    await asyncio.sleep(delay)
+    """Универсальная функция для отложенной отправки сообщений."""
+    if delay > 0:
+        await asyncio.sleep(delay)
 
-    # Импортируем здесь чтобы избежать circular import при старте
     from utils.line_api import push_text
-
-    text = _build_message(lang, product_name)
+    text = _build_message(msg_type, lang)
+    
     try:
         success = push_text(line_user_id, text)
         if success:
-            logger.info(
-                "Thank-you sent to line_user_id=%s (order=%s)", line_user_id, order_id
-            )
+            logger.info("Sent %s to line_user_id=%s (order=%s)", msg_type, line_user_id, order_id)
         else:
-            logger.error(
-                "Failed to send thank-you to line_user_id=%s (order=%s)",
-                line_user_id, order_id,
-            )
+            logger.error("Failed to send %s to line_user_id=%s", msg_type, line_user_id)
     except Exception as exc:
-        logger.error(
-            "Exception sending thank-you to line_user_id=%s: %s", line_user_id, exc
-        )
+        logger.error("Exception sending %s: %s", msg_type, exc)
 
 
-# ─── Публичная функция: вызывается из handlers/loyalty.py после регистрации ───
+async def _schedule_all_messages(line_user_id: str, lang: str, order_id: Optional[str], initial_delay: int = THANK_YOU_DELAY):
+    """Планирует обе рассылки: через 10 минут и через 24 часа."""
+    # Сообщение 1: Спасибо за покупку
+    asyncio.create_task(
+        _send_delayed_message(line_user_id, lang, "thank_you", initial_delay, order_id)
+    )
+    # Сообщение 2: Ретейшн через сутки после покупки
+    # Если мы вызываем это из flush_pending спустя время, считаем остаток от RETENTION_DELAY
+    asyncio.create_task(
+        _send_delayed_message(line_user_id, lang, "retention", initial_delay + (RETENTION_DELAY - THANK_YOU_DELAY), order_id)
+    )
+
+
 def flush_pending(phone: str) -> None:
-    """
-    Если для данного номера есть отложенные покупки (LINE userId не был известен
-    в момент вебхука), запускаем задачи сейчас.
-    Вызывается из loyalty.py после успешной привязки userId к телефону.
-    """
     from utils.line_registry import get_user_id
-
     normalized = phone.strip().replace(" ", "").replace("-", "")
     tasks = _pending.pop(normalized, [])
     if not tasks:
@@ -129,28 +112,17 @@ def flush_pending(phone: str) -> None:
 
     line_user_id = get_user_id(normalized)
     if line_user_id is None:
-        logger.warning("flush_pending: still no LINE userId for phone=%s", normalized)
         return
 
     for task in tasks:
         elapsed = datetime.now(tz=timezone.utc).timestamp() - task["ts"]
-        remaining = max(0, THANK_YOU_DELAY - int(elapsed))
+        remaining_thank_you = max(0, THANK_YOU_DELAY - int(elapsed))
+        
         asyncio.create_task(
-            _schedule_thank_you(
-                line_user_id,
-                task["lang"],
-                task["product_name"],
-                task["order_id"],
-                delay=remaining,
-            )
-        )
-        logger.info(
-            "flush_pending: scheduled thank-you for phone=%s, remaining=%ds",
-            normalized, remaining,
+            _schedule_all_messages(line_user_id, task["lang"], task["order_id"], initial_delay=remaining_thank_you)
         )
 
 
-# ─── Pydantic модель запроса ──────────────────────────────────────────────────
 class PurchaseWebhook(BaseModel):
     phone: str
     customer_name: str
@@ -163,79 +135,47 @@ class PurchaseWebhook(BaseModel):
     def validate_phone(cls, v: str) -> str:
         cleaned = v.strip().replace(" ", "").replace("-", "")
         if not cleaned.startswith("+") or len(cleaned) < 7:
-            raise ValueError(
-                "phone must be in international format, e.g. +66812345678"
-            )
+            raise ValueError("phone must be in international format")
         return cleaned
 
     @field_validator("lang")
     @classmethod
     def validate_lang(cls, v: str) -> str:
-        allowed = {"en", "ru", "thai"}
-        return v if v in allowed else "en"
+        return v if v in {"en", "ru", "thai"} else "en"
 
 
-# ─── Webhook endpoint ─────────────────────────────────────────────────────────
-@app.post("/odoo/purchase", summary="Odoo CRM purchase webhook")
+@app.post("/odoo/purchase")
 async def odoo_purchase(
     payload: PurchaseWebhook,
     x_api_key: Optional[str] = Header(default=None, alias="X-API-Key"),
 ):
-    # Проверка секрета
     if WEBHOOK_SECRET and x_api_key != WEBHOOK_SECRET:
         raise HTTPException(status_code=401, detail="Invalid or missing X-API-Key")
 
     from utils.line_registry import get_user_id
-
     line_user_id = get_user_id(payload.phone)
 
     if line_user_id is None:
-        # Пользователь ещё не регистрировался через бот — сохраняем задачу
-        normalized = payload.phone
-        _pending.setdefault(normalized, []).append({
+        _pending.setdefault(payload.phone, []).append({
             "lang": payload.lang,
-            "product_name": payload.product_name,
             "order_id": payload.order_id,
             "ts": datetime.now(tz=timezone.utc).timestamp(),
         })
-        logger.warning(
-            "odoo_purchase: no LINE userId for phone=%s — queued (order=%s)",
-            payload.phone, payload.order_id,
-        )
-        return JSONResponse(
-            status_code=202,
-            content={
-                "status": "queued",
-                "detail": (
-                    "LINE userId not found yet; "
-                    "message will be sent when user registers via loyalty flow"
-                ),
-            },
-        )
+        return JSONResponse(status_code=202, content={"status": "queued"})
 
-    # userId найден — планируем отправку через THANK_YOU_DELAY секунд (по умолчанию 1 час)
-    asyncio.create_task(
-        _schedule_thank_you(
-            line_user_id,
-            payload.lang,
-            payload.product_name,
-            payload.order_id,
-            delay=THANK_YOU_DELAY,
-        )
-    )
+    # Планируем обе рассылки
+    await _schedule_all_messages(line_user_id, payload.lang, payload.order_id)
 
     return JSONResponse(
         status_code=200,
         content={
             "status": "scheduled",
             "line_user_id": line_user_id,
-            "delay_seconds": THANK_YOU_DELAY,
-            "product_name": payload.product_name,
+            "messages": ["thank_you_10m", "retention_24h"]
         },
     )
 
 
-# ─── Health check ─────────────────────────────────────────────────────────────
-@app.get("/health", summary="Health check")
+@app.get("/health")
 async def health():
     return {"status": "ok"}
