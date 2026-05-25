@@ -19,8 +19,8 @@ TEXTS = {
         "loading": "⏳ Processing...",
         "help_welcome": (
             "🤖 AI Help Assistant\n\n"
-            "Hello! I'm your AI assistant powered by Gemini.\n"
-            "Ask me anything — I'm here to help!\n\n"
+            "Welcome! Feel free to ask any questions.\n"
+            "We'll respond as soon as possible!\n\n"
             "Type your question below 👇"
         ),
         "loyalty_hint": "Get your loyalty card in 30 seconds and receive a bonus 🎁",
@@ -120,8 +120,8 @@ TEXTS = {
         "loading": "⏳ Загрузка...",
         "help_welcome": (
             "🤖 Помощник ИИ\n\n"
-            "Привет! Я ваш ИИ-ассистент на основе Gemini.\n"
-            "Задайте любой вопрос — я готов помочь!\n\n"
+            "Приветствуем!.\n"
+            "Задай нам любой вопрос и мы быстро ответим!\n\n"
             "Напишите ваш вопрос ниже 👇"
         ),
         "loyalty_hint": "Получите карту лояльности за 30 секунд и получите бонус 🎁",
@@ -201,8 +201,8 @@ TEXTS = {
         "loading": "⏳ กำลังประมวลผล...",
         "help_welcome": (
             "🤖 ผู้ช่วย AI\n\n"
-            "สวัสดี! ฉันคือผู้ช่วย AI ที่ขับเคลื่อนโดย Gemini\n"
-            "ถามอะไรก็ได้ — ฉันพร้อมช่วยคุณ!\n\n"
+            "ยินดีต้อนรับ!\n"
+            "หากมีข้อสงสัยใด ๆ โปรดสอบถามได้เลย เราจะตอบกลับโดยเร็วที่สุด!\n\n"
             "พิมพ์คำถามด้านล่าง 👇"
         ),
         "loyalty_hint": "รับบัตรสะสมแต้มใน 30 วินาทีและรับโบนัส 🎁",
