@@ -42,7 +42,7 @@ from handlers.manager import (
 )
 from handlers.about import handle_about
 from handlers.socials import handle_socials
-from handlers.help import help_start, handle_help_message
+from handlers.help import help_start, handle_help_message, handle_contact_manager
 
 # ── Подключаем Odoo purchase webhook ──────────────────────────────────────────
 # Импортируем app из webhook_api и монтируем его роуты в основной FastAPI app.
@@ -100,6 +100,8 @@ async def route_postback(user_id: str, data: str):
         await help_start(user_id)
     elif data == "help:new_chat":
         await help_start(user_id)
+    elif data == "help:contact_manager":
+        await handle_contact_manager(user_id)
     elif data == "menu:lang":
         from utils.line_api import push_language_select
         push_language_select(user_id)
