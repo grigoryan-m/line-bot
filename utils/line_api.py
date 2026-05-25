@@ -125,7 +125,6 @@ def push_main_menu(user_id: str, text: str, lang: str) -> bool:
                 {"type": "text", "text": text, "wrap": True, "weight": "bold", "size": "md"},
                 btn("btn_stores", "menu:stores"),
                 btn("btn_loyalty", "menu:loyalty"),
-                btn("btn_manager", "menu:manager"),
                 btn("btn_about", "menu:about"),
                 btn("btn_socials", "menu:socials"),
                 btn("btn_help", "menu:help"),
@@ -278,6 +277,16 @@ def push_manager_menu(user_id: str, text: str, lang: str) -> bool:
     from locales.texts import t
     return push_quick_reply(user_id, text, [
         (t(lang, "btn_transfer_manager"), "manager:transfer"),
+        (t(lang, "btn_main_menu"), "menu:main"),
+    ])
+
+
+def push_ai_response(user_id: str, text: str, lang: str) -> bool:
+    """Ответ ИИ-ассистента с кнопкой связи с менеджером под каждым сообщением."""
+    from locales.texts import t
+    return push_quick_reply(user_id, text, [
+        (t(lang, "btn_transfer_manager"), "help:contact_manager"),
+        (t(lang, "btn_help_new_chat"), "help:new_chat"),
         (t(lang, "btn_main_menu"), "menu:main"),
     ])
 
