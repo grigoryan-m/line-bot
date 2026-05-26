@@ -272,7 +272,33 @@ def push_store_card(user_id: str, store: dict, lang: str) -> bool:
             }
         ]
     })
+def push_existing_card_menu(user_id: str, text: str, lang: str) -> bool:
+    """
+    Экран 'Карта уже есть / зарегистрирована'.
+    Показывает текст с номером карты и предоставляет quick-кнопки:
+    - ℹ️ Как использовать карту
+    - 🏠 Главное меню
+    """
+    from locales.texts import t
+    return push_quick_reply(user_id, text, [
+        (t(lang, "btn_how_to_use"), "loyalty:how_to_use"),
+        (t(lang, "btn_main_menu"), "menu:main"),
+    ])
 
+
+def push_no_card_menu(user_id: str, text: str, lang: str) -> bool:
+    """
+    Экран приветствия '🎁 Моя карта лояльности' (когда карты еще нет).
+    Показывает стартовый текст и вешает quick-кнопки:
+    - 📍 Найти ближайший магазин
+    - 🏠 Главное меню
+    При этом пользователь остается в стейте loyalty:phone и может просто ввести телефон.
+    """
+    from locales.texts import t
+    return push_quick_reply(user_id, text, [
+        (t(lang, "btn_find_store"), "loyalty:find_store"),
+        (t(lang, "btn_main_menu"), "menu:main"),
+    ])
 def push_manager_menu(user_id: str, text: str, lang: str) -> bool:
     """Меню чата с менеджером: кнопки 'Человек' и 'Главное меню'."""
     from locales.texts import t
