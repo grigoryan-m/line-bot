@@ -139,7 +139,7 @@ TEXTS = {
         ),
 
         # Socials
-        "socials_text": "📲 *Our Social Media*\n\nVisit our mini-landing page for all links:",
+        "socials_text": "📲 *Our instagram page: https://www.instagram.com/weedenthailand/",
         "btn_open_socials": "🔗 Open social links",
 
         # Errors
@@ -279,7 +279,7 @@ TEXTS = {
             "🔗 Сайт: weeden.club\n\n"
         ),
 
-        "socials_text": "📲 *Наши соцсети*\n\nПосетите наш мини-лендинг со всеми ссылками:",
+        "socials_text": "📲 Наш инстаграм: https://www.instagram.com/weedenthailand/",
         "btn_open_socials": "🔗 Открыть соцсети",
         "error_generic": "⚠️ Что-то пошло не так. Попробуйте ещё раз.",
     },
@@ -406,11 +406,12 @@ TEXTS = {
             "🔗 เว็บไซต์: weeden.club\n\n"
         ),
 
-        "socials_text": "📲 *โซเชียลมีเดียของเรา*\n\nเยี่ยมชมหน้า mini-landing ของเรา:",
+        "socials_text": "📲 อินสตาแกรมของเรา: https://www.instagram.com/weedenthailand/",
         "btn_open_socials": "🔗 เปิดโซเชียลมีเดีย",
         "error_generic": "⚠️ เกิดข้อผิดพลาด กรุณาลองอีกครั้ง",
     }
 }
+
 
 def t(lang: str, key: str, **kwargs) -> str:
     text = TEXTS.get(lang, TEXTS["en"]).get(key) or TEXTS["en"].get(key, f"[{key}]")
