@@ -4,7 +4,7 @@ import os
 from typing import List, Dict, Any, Optional, Tuple
 
 STORES_FILE = os.path.join(os.path.dirname(__file__), "../data/stores.json")
-SEARCH_RADIUS_KM = 3.0
+SEARCH_RADIUS_KM = 5.0
 
 
 def _haversine(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
