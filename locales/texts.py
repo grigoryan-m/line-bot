@@ -22,15 +22,13 @@ TEXTS = {
         "btn_change_lang": "🌐 Change language",
 
         "loading": "⏳ Processing...",
-
-        "review_reminder": "🙏 Thank you for your purchase!\n\nWe'd love to hear your feedback — it takes less than a minute and helps us improve. Your opinion matters! 💬",
-
-        "loyalty_hint": (
-            "Hello! 👋 Welcome to WeedeN — one of the leading Thai brands in healthy lifestyle and cannabis-based wellness. "
-            "We have 55+ stores all over Thailand: Bangkok, Phuket, Samui, Pattaya, and other cities.\n"
-            "Choose what you are interested in 👇"
+        "help_welcome": (
+            "🤖 AI Help Assistant\n\n"
+            "Welcome! Feel free to ask any questions.\n"
+            "We'll respond as soon as possible!\n\n"
+            "Type your question below 👇"
         ),
-
+        "loyalty_hint": "Get your loyalty card in 30 seconds and receive a bonus 🎁",
         # Reminders
         "loyalty_reminder": "It takes 30 seconds to create a loyalty card for bonuses in every store",
         "after_phone_reminder": "Finish registration to activate your bonus",
@@ -102,15 +100,12 @@ TEXTS = {
         "btn_send_geo": "📍 Share location",
         "btn_choose_region": "🗺 Choose region",
         "stores_choose_region": "Please select your region:",
-        "stores_not_found": "😕 There are no stores near you right now. Choose a region manually or write to us — we'll help you find the nearest location.",
-        "stores_result": "📍 *Nearest stores ({count} found):*",
-        "btn_open_maps": "🗺 Open in Google Maps",
-        "store_card": (
-            "🏪 *{name}*\n"
-            "📍 {address}\n"
-            "🕐 {hours}\n"
-        ),
-
+        "stores_not_found": "😔 No stores found nearby. Try a different region.",
+        "stores_result": "📍 Nearest stores ({count} found):",
+        "btn_open_maps": "🗺 Google Maps",
+        "store_card": "🏪 {name}\n📍 {address}\n🕐 {hours}\n",
+        "btn_help": "🤖 AI Assistant",
+        "btn_help_new_chat": "🔄 New conversation",
         # Manager
         "manager_hello": (
             "💬 *Manager Chat*\n\n"
@@ -123,9 +118,9 @@ TEXTS = {
         ),
         "manager_transfer": "🔄 Transferring you to a live manager...",
         "manager_transferred": "✅ A manager will respond shortly. Please wait.",
-        "manager_username_prompt": "👤 You can contact our manager directly: {username}",
+        "manager_username_prompt": "👤 You can contact our manager directly on LINE: {line_id}",
         "manager_left_message": "✅ Your message has been saved. We'll contact you soon!",
-        "btn_transfer_manager": "👤 Talk to a human",
+        "btn_transfer_manager": "💬 Contact manager",
         "ai_error": "⚠️ AI assistant is temporarily unavailable. Connecting you to a manager...",
 
         # About
@@ -168,13 +163,11 @@ TEXTS = {
         "btn_main_menu": "🏠 Главное меню",
         "btn_change_lang": "🌐 Сменить язык",
         "loading": "⏳ Загрузка...",
-
-        "review_reminder": "🙏 Благодарим за покупку!\n\nПожалуйста, оставьте отзыв о товаре — это займёт меньше минуты и поможет нам стать лучше. Ваше мнение очень важно для нас! 💬",
-
-        "loyalty_hint": (
-            "Привет! 👋 Добро пожаловать в WeedeN — один из ведущих тайских брендов в сфере здорового образа жизни и wellness на основе каннабиса. "
-            "У нас 55+ магазинов по всему Таиланду: Бангкок, Пхукет, Самуи, Паттайя и другие города.\n"
-            "Выбери, что тебя интересует 👇"
+        "help_welcome": (
+            "🤖 Помощник ИИ\n\n"
+            "Приветствуем!.\n"
+            "Задай нам любой вопрос и мы быстро ответим!\n\n"
+            "Напишите ваш вопрос ниже 👇"
         ),
         
         # Reminders
@@ -224,7 +217,8 @@ TEXTS = {
         "loyalty_ask_thai_citizen": "🇹🇭 Вы гражданин Таиланда?",
         "btn_yes": "✅ Да",
         "btn_no": "❌ Нет",
-        
+        "btn_help": "🤖 Помощник ИИ",
+        "btn_help_new_chat": "🔄 Новый диалог",
         "loyalty_success": (
             "🎉 *Регистрация прошла успешно!*\n\n"
             "📱 Телефон: {phone}\n"
@@ -265,11 +259,10 @@ TEXTS = {
         ),
         "manager_transfer": "🔄 Передаём вас живому менеджеру...",
         "manager_transferred": "✅ Менеджер скоро ответит. Пожалуйста, подождите.",
-        "manager_username_prompt": "👤 Вы можете написать нашему менеджеру напрямую: {username}",
-        "manager_left_message": "✅ Ваше сообщение сохранено. Мы свяжемся с вами в ближайшее время!",
-        "btn_transfer_manager": "👤 Связаться с человеком",
-        "ai_error": "⚠️ AI-ассистент временно недоступен. Соединяем с менеджером...",
-
+        "manager_username_prompt": "👤 Вы можете написать нашему менеджеру напрямую в LINE: {line_id}",
+        "manager_left_message": "✅ Ваше сообщение сохранено. Мы свяжемся с вами!",
+        "btn_transfer_manager": "💬 Связаться с менеджером",
+        "ai_error": "⚠️ AI-ассистент временно недоступен. Подключаем менеджера...",
         "about_text": (
             "ℹ️ *О компании*\n\n"
             "WeedeN — крупнейшая сеть cannabis-шопов в Таиланде 🌿\n\n"
@@ -305,14 +298,12 @@ TEXTS = {
         "btn_back": "⬅️ กลับ",
         "btn_main_menu": "🏠 เมนูหลัก",
         "btn_change_lang": "🌐 เปลี่ยนภาษา",
-        "loading": "⏳ กำลังโหลด",
-
-        "review_reminder": "🙏 ขอบคุณสำหรับการซื้อของคุณ!\n\nกรุณาฝากรีวิวสินค้า — ใช้เวลาไม่ถึงนาที และช่วยให้เราพัฒนาได้ดีขึ้น ความคิดเห็นของคุณสำคัญมาก! 💬",
-
-        "loyalty_hint": (
-            "สวัสดี! 👋 ยินดีต้อนรับสู่ WeedeN — หนึ่งในแบรนด์ชั้นนำของไทยด้านไลฟ์สไตล์เพื่อสุขภาพและเวลเนสจากกัญชา "
-            "เรามีร้านค้ากว่า 55 สาขาทั่วประเทศไทย: กรุงเทพฯ ภูเก็ต สมุย พัทยา และเมืองอื่นๆ\n"
-            "เลือกสิ่งที่คุณสนใจด้านล่าง 👇"
+        "loading": "⏳ กำลังประมวลผล...",
+        "help_welcome": (
+            "🤖 ผู้ช่วย AI\n\n"
+            "ยินดีต้อนรับ!\n"
+            "หากมีข้อสงสัยใด ๆ โปรดสอบถามได้เลย เราจะตอบกลับโดยเร็วที่สุด!\n\n"
+            "พิมพ์คำถามด้านล่าง 👇"
         ),
 
         # Reminders
@@ -392,10 +383,12 @@ TEXTS = {
         "manager_offline": "🕐 ผู้จัดการทำงานตั้งแต่ 10:00 ถึง 18:00\n\nคุณสามารถฝากข้อความไว้ได้:",
         "manager_transfer": "🔄 กำลังโอนไปยังผู้จัดการ...",
         "manager_transferred": "✅ ผู้จัดการจะตอบในไม่ช้า กรุณารอสักครู่",
-        "manager_username_prompt": "👤 คุณสามารถติดต่อผู้จัดการของเราโดยตรง: {username}",
-        "manager_left_message": "✅ บันทึกข้อความของคุณแล้ว เราจะติดต่อกลับโดยเร็ว!",
-        "btn_transfer_manager": "👤 คุยกับคน",
-        "ai_error": "⚠️ AI ไม่พร้อมใช้งานชั่วคราว กำลังเชื่อมต่อกับผู้จัดการ...",
+        "manager_username_prompt": "👤 คุณสามารถติดต่อผู้จัดการของเราโดยตรงใน LINE: {line_id}",
+        "manager_left_message": "✅ บันทึกข้อความแล้ว เราจะติดต่อกลับ!",
+        "btn_transfer_manager": "💬 ติดต่อผู้จัดการ",
+        "ai_error": "⚠️ AI ไม่พร้อมใช้งานชั่วคราว กำลังเชื่อมต่อผู้จัดการ...",
+        "btn_help": "🤖 ผู้ช่วย AI",
+        "btn_help_new_chat": "🔄 เริ่มการสนทนาใหม่",
 
         "about_text": (
             "ℹ️ *เกี่ยวกับเรา*\n\n"
