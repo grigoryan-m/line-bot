@@ -1,3 +1,7 @@
+"""
+Флоу регистрации карты лояльности — полный аналог Telegram-версии.
+Состояния: loyalty:phone → loyalty:otp → loyalty:name → loyalty:country → loyalty:tourist → loyalty:thai_citizen
+"""
 import re
 import logging
 import requests
@@ -6,20 +10,12 @@ import time
 
 from locales.texts import t
 from utils import user_data as ud
-# Предполагается, что вы добавите push_existing_card_menu и push_no_card_menu в utils.line_api
-from utils.line_api import (
-    push_text, 
-    push_yes_no, 
-    push_back_to_menu, 
-    push_image,
-    push_existing_card_menu,  # ← Новое: меню для существующей карты (Кнопки: Как использовать, Главное меню)
-    push_no_card_menu        # ← Новое: меню при отсутствии карты (Кнопки: Найти магазин, Главное меню)
-)
+from utils.line_api import push_text, push_yes_no, push_back_to_menu, push_image
 from utils.otp import generate_otp, verify_otp, send_otp_sms
 from utils.odoo import register_customer
 from utils.api_client import register_channel
-from utils.line_registry import bind as registry_bind   
-from webhook_api import flush_pending                    
+from utils.line_registry import bind as registry_bind   # ← новое
+from webhook_api import flush_pending                    # ← новое
 from config import PIXEL_ID, ACCESS_TOKEN
 
 logger = logging.getLogger(__name__)
@@ -30,27 +26,8 @@ META_ADS_URL = f"https://graph.facebook.com/v19.0/{PIXEL_ID}/events"
 
 async def loyalty_start(user_id: str):
     lang = ud.get_lang(user_id)
-    
-    # TODO: Реализуйте проверку наличия телефона/карты у пользователя по LINE user_id.
-    # Например, проверка через локальный registry или запрос в CRM Odoo.
-    user_phone = None  # get_user_phone_by_line(user_id)
-
-    if user_phone:
-        # КАРТА УЖЕ ЕСТЬ
-        # Отправляем сообщение "Вот твоя карта..." с кнопками "Как использовать" и "Главное меню"
-        push_existing_card_menu(user_id, t(lang, "loyalty_already_have_card_text"), lang)
-        
-        # Если необходимо сразу приложить штрихкод, раскомментируйте (настроив получение url):
-        # barcode_url = get_user_barcode_url(user_id)
-        # if barcode_url:
-        #     push_image(user_id, barcode_url)
-    else:
-        # КАРТЫ ЕЩЕ НЕТ
-        # Отправляем приветственный текст "🎁 Моя карта лояльности" с кнопками "Найти магазин" и "Главное меню"
-        push_no_card_menu(user_id, t(lang, "loyalty_start_no_card_text"), lang)
-        
-        # Сразу переводим пользователя в стейт ожидания телефона, чтобы он мог отправить его текстом
-        ud.set_state(user_id, "loyalty:phone")
+    ud.set_state(user_id, "loyalty:phone")
+    push_text(user_id, t(lang, "loyalty_start"))
 
 
 async def handle_loyalty_input(user_id: str, text: str):
@@ -73,16 +50,7 @@ async def handle_loyalty_input(user_id: str, text: str):
 
 async def handle_loyalty_postback(user_id: str, data: str):
     lang = ud.get_lang(user_id)
-    
-    # Обработка новых интерактивных кнопок
-    if data == "loyalty:how_to_use":
-        push_text(user_id, t(lang, "how_to_use_loyalty"))
-    elif data == "loyalty:find_store":
-        # Шаблон обработки или вызова локации/карты магазинов
-        push_text(user_id, t(lang, "find_store_instruction"))
-        
-    # Базовый флоу регистрации
-    elif data == "tourist:yes":
+    if data == "tourist:yes":
         await _tourist_answer(user_id, True, lang)
     elif data == "tourist:no":
         await _tourist_answer(user_id, False, lang)
@@ -212,9 +180,14 @@ async def _finalize(user_id: str, lang: str):
         push_back_to_menu(user_id, t(lang, "loyalty_crm_error"), lang)
         return
 
+    # Привязываем LINE userId к телефону в BotsAPI (для review-запросов и т.д.)
     await register_channel(phone, user_id)
-    registry_bind(phone, user_id)   
-    flush_pending(phone)             
+
+    # Привязываем LINE userId к телефону локально (для Odoo purchase webhook)
+    registry_bind(phone, user_id)   # ← новое: сохраняем phone → line_user_id
+
+    # Отправляем отложенные purchase-уведомления, если они уже пришли от Odoo
+    flush_pending(phone)             # ← новое: обрабатываем pending-очередь
 
     messages = result.get("content", {}).get("messages", [])
     api_message = None
@@ -227,12 +200,10 @@ async def _finalize(user_id: str, lang: str):
             barcode = msg.get("url")
 
     if api_message:
-        # Изменено: После успешной регистрации отправляем контент с кнопкой "Как использовать" 
-        # вместо стандартного дефолтного возврата в меню
-        push_existing_card_menu(user_id, api_message, lang)
+        push_back_to_menu(user_id, api_message, lang)
     if barcode:
         push_image(user_id, barcode)
-    if not api_message and not barcode:
+    if not api_message:
         logger.error(f"Unexpected Odoo API response: {result}")
         push_back_to_menu(user_id, t(lang, "loyalty_crm_error"), lang)
 
@@ -240,6 +211,7 @@ async def _finalize(user_id: str, lang: str):
 
 
 def send_meta_ads_info(phone: str):
+    """Send CompleteRegistration event to Meta Ads Manager."""
     payload = {
         "data": [
             {
