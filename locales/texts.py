@@ -1,26 +1,21 @@
+"""
+Тексты сообщений для LINE бота.
+Структура идентична Telegram-боту для простоты переноса.
+"""
+
 TEXTS = {
     "en": {
         "welcome": "👋 Welcome! Please choose your language:",
         "lang_set": "✅ Language set to English.",
-        "main_menu": "🏠 *Main Menu*\nChoose an option below:",
+        "main_menu": "🏠 Main Menu\nChoose an option below:",
         "btn_stores": "📍 Find nearest store",
-        "btn_find_store": "📍 Find nearest store",
         "btn_loyalty": "🎁 Get loyalty card",
         "btn_manager": "💬 Contact manager",
         "btn_about": "ℹ️ About us",
         "btn_socials": "📲 Our socials",
-        "btn_help": "🤖 Help (AI Assistant)",
-        "btn_help_clear": "🗑 Clear chat history",
-        "help_hello": (
-            "🤖 *AI Assistant*\n\n"
-            "Welcome! Ask us any question and we'll reply quickly!\n"
-            "Type anything to get started!"
-        ),
-        "help_cleared": "✅ Conversation cleared. Let's start fresh!",
         "btn_back": "⬅️ Back",
         "btn_main_menu": "🏠 Main menu",
         "btn_change_lang": "🌐 Change language",
-
         "loading": "⏳ Processing...",
         "help_welcome": (
             "🤖 AI Help Assistant\n\n"
@@ -32,72 +27,46 @@ TEXTS = {
         # Reminders
         "loyalty_reminder": "It takes 30 seconds to create a loyalty card for bonuses in every store",
         "after_phone_reminder": "Finish registration to activate your bonus",
-        "loyalty5m_reminder": "Without registration you can’t get rewards in stores",
+        "loyalty5m_reminder": "Without registration you can't get rewards in stores",
         "loyalty24h_reminder": "Your bonus -30% is still waiting 🎁. Register to get your loyalty card!",
-        
         # Loyalty flow
         "loyalty_start": (
-            "🎁 *Get access to bonuses, discounts and faster service*\n\n"
+            "🎁 Get access to bonuses, discounts and faster service\n\n"
             "Please enter your phone number in international format:\n"
             "Example: +66812345678"
         ),
-        "loyalty_start_no_card_text": (
-            "🎁 *My Loyalty Card*\n\n"
-            "To get your card, please enter your phone number in international format:\n"
-            "Example: +66812345678"
-        ),
-        "loyalty_already_have_card_text": (
-            "Here is your card 🎁\n"
-            "Card number: `{card_number}`\n"
-            "Show the barcode at the checkout or tell them your number — both options work."
-        ),
-        "how_to_use_loyalty": (
-            "It's simple 👌\n"
-            "Come to the checkout at any WeedeN store\n"
-            "Show your barcode or say your card number\n"
-            "The cashier will apply your discount — up to 30% off your entire receipt\n"
-            "The card works in all 55+ stores across Thailand."
-        ),
-        "btn_how_to_use": "ℹ️ How to use the card",
-
         "loyalty_phone_invalid": "❌ Invalid phone number. Please use international format, e.g. +66812345678",
-        "loyalty_otp_sent": "📱 OTP code sent to *{phone}*\n\nPlease enter the 6-digit code:",
-        "loyalty_otp_invalid": "❌ Invalid OTP code. Please try again or press /start to restart.",
-        "loyalty_otp_attempts": "❌ Too many failed attempts. Please start over with /start",
-        "loyalty_ask_age": "✅ Phone verified!\n\nPlease enter your age:",
-        "loyalty_age_invalid": "❌ Please enter a valid age (1-120):",
-        "loyalty_ask_country": "🌍 Please enter your country (e.g. Thailand, Russia, USA):",
-        "loyalty_crm_error": "⚠️ A technical error occurred. Please try again later or contact our manager.",
-        "show_card_hint": "Don't forget to show your loyalty card in store to get your bonus",
-
-        # New keys for WeedeN REST API flow
+        "loyalty_otp_sent": "📱 OTP code sent to {phone}\n\nPlease enter the 6-digit code:",
+        "loyalty_otp_invalid": "❌ Invalid OTP code. Please try again or type /start to restart.",
+        "loyalty_otp_attempts": "❌ Too many failed attempts. Please type /start to restart.",
         "loyalty_ask_name": "✅ Phone verified!\n\nPlease enter your full name:",
         "loyalty_name_invalid": "❌ Please enter your real full name (at least 2 characters):",
-        "loyalty_ask_tourist": "🌍 Are you visiting as a tourist?",
-        "loyalty_ask_thai_citizen": "🇹🇭 Are you a Thai citizen?",
+        "loyalty_ask_country": "🌍 Please enter your country (e.g. Thailand, Russia, USA):",
+        "loyalty_ask_tourist": "🌍 Are you visiting as a tourist?\n\nReply with: yes / no",
+        "loyalty_ask_thai_citizen": "🇹🇭 Are you a Thai citizen?\n\nReply with: yes / no",
+        "loyalty_yes_no_buttons": True,  # use quick reply buttons
         "btn_yes": "✅ Yes",
         "btn_no": "❌ No",
-
-        # Fallback templates when API doesn't return a formatted message
         "loyalty_success": (
-            "🎉 *Registration successful!*\n\n"
+            "🎉 Registration successful!\n\n"
             "📱 Phone: {phone}\n"
-            "🏷 Your loyalty card barcode: `{barcode}`\n\n"
+            "🏷 Your loyalty card barcode: {barcode}\n\n"
             "Show this code at any of our stores to get your discount!"
         ),
         "loyalty_already_exists": (
-            "✅ *Welcome back!*\n\n"
+            "✅ Welcome back!\n\n"
             "📱 Phone: {phone}\n"
-            "🏷 Barcode: `{barcode}`\n\n"
+            "🏷 Barcode: {barcode}\n\n"
             "Your information has been updated."
         ),
-
+        "loyalty_crm_error": "⚠️ A technical error occurred. Please try again later or contact our manager.",
+        "show_card_hint": "\nDon't forget to show your loyalty card in store to get bonus",
         # Store search
         "stores_request_geo": (
-            "📍 *Find nearest store*\n\n"
-            "Please share your location or choose a region manually 🗺️"
+            "📍 Find nearest store\n\n"
+            "Please share your location or choose a region manually:"
         ),
-        "btn_send_geo": "📍 Share location",
+        "btn_send_geo": "📍 Share my location",
         "btn_choose_region": "🗺 Choose region",
         "stores_choose_region": "Please select your region:",
         "stores_not_found": "😔 No stores found nearby. Try a different region.",
@@ -108,7 +77,7 @@ TEXTS = {
         "btn_help_new_chat": "🔄 New conversation",
         # Manager
         "manager_hello": (
-            "💬 *Manager Chat*\n\n"
+            "💬 Manager Chat\n\n"
             "Our AI assistant will help you first.\n"
             "Type your question:"
         ),
@@ -122,21 +91,17 @@ TEXTS = {
         "manager_left_message": "✅ Your message has been saved. We'll contact you soon!",
         "btn_transfer_manager": "💬 Contact manager",
         "ai_error": "⚠️ AI assistant is temporarily unavailable. Connecting you to a manager...",
-
         # About
         "about_text": (
-            "ℹ️ *About Us*\n\n"
-            "WeedeN is the largest network of cannabis shops in Thailand 🌿\n\n"
-            "55+ stores in key locations: Bangkok, Phuket, Koh Samui, Pattaya, and other cities. "
-            "We are building a modern and healthy cannabis culture — quality products, friendly service, "
-            "and a loyalty program with real discounts up to 30%.\n"
-            "🔗 Website: weeden.club\n\n"
+            "ℹ️ About Us\n\n"
+            "We are a leading retail company providing quality products.\n\n"
+            "🌐 Our stores are located across multiple countries.\n"
+            "📞 Support: available 24/7 via this bot.\n\n"
+            "Use the menu below to explore more:"
         ),
-
         # Socials
-        "socials_text": "📲 *Our instagram page: https://www.instagram.com/weedenthailand/",
+        "socials_text": "📲 Our Social Media\n\nVisit our mini-landing page for all links:",
         "btn_open_socials": "🔗 Open social links",
-
         # Errors
         "error_generic": "⚠️ Something went wrong. Please try again.",
     },
@@ -144,21 +109,12 @@ TEXTS = {
     "ru": {
         "welcome": "👋 Добро пожаловать! Пожалуйста, выберите язык:",
         "lang_set": "✅ Язык установлен: Русский.",
-        "main_menu": "🏠 *Главное меню*\nВыберите раздел:",
+        "main_menu": "🏠 Главное меню\nВыберите раздел:",
         "btn_stores": "📍 Найти ближайший магазин",
-        "btn_find_store": "📍 Найти ближайший магазин",
-        "btn_loyalty": "🎁 Моя карта лояльности",
+        "btn_loyalty": "🎁 Получить карту лояльности",
         "btn_manager": "💬 Связаться с менеджером",
         "btn_about": "ℹ️ О компании",
         "btn_socials": "📲 Наши соцсети",
-        "btn_help": "🤖 Помощь (ИИ-ассистент)",
-        "btn_help_clear": "🗑 Очистить историю чата",
-        "help_hello": (
-            "🤖 *ИИ-ассистент*\n\n"
-            "Приветствуем! Задай нам любой вопрос и мы быстро ответим!\n"
-            "Напишите что-нибудь, чтобы начать!"
-        ),
-        "help_cleared": "✅ История очищена. Начнём заново!",
         "btn_back": "⬅️ Назад",
         "btn_main_menu": "🏠 Главное меню",
         "btn_change_lang": "🌐 Сменить язык",
@@ -169,132 +125,78 @@ TEXTS = {
             "Задай нам любой вопрос и мы быстро ответим!\n\n"
             "Напишите ваш вопрос ниже 👇"
         ),
-        
-        # Reminders
+        "loyalty_hint": "Получите карту лояльности за 30 секунд и получите бонус 🎁",
         "loyalty_reminder": "Создание карты лояльности для получения бонусов в любом магазине занимает 30 секунд",
         "after_phone_reminder": "Завершите регистрацию, чтобы активировать бонус",
         "loyalty5m_reminder": "Без регистрации вы не сможете получать бонусы в магазинах",
         "loyalty24h_reminder": "Ваш бонус -30% всё ещё ждёт вас 🎁. Зарегистрируйтесь, чтобы получить карту постоянного клиента!",
-
         "loyalty_start": (
-            "🎁 *Получите доступ к бонусам, скидкам и более оперативному обслуживанию*\n\n"
+            "🎁 Получите доступ к бонусам, скидкам и более оперативному обслуживанию\n\n"
             "Введите номер телефона в международном формате:\n"
-            "Пример: +79123456789"
-        ),
-        "loyalty_start_no_card_text": (
-            "🎁 *Моя карта лояльности*\n\n"
-            "Для оформления карты введите номер телефона в международном формате:\n"
             "Пример: +66812345678"
         ),
-        "loyalty_already_have_card_text": (
-            "Вот твоя карта 🎁\n"
-            "Номер карты: `{card_number}`\n"
-            "Покажи на кассе штрихкод или назови номер — оба варианта работают."
-        ),
-        "how_to_use_loyalty": (
-            "Всё просто 👌\n"
-            "Подходишь на кассу в любом магазине WeedeN\n"
-            "Показываешь штрихкод или называешь номер карты\n"
-            "Кассир применяет скидку — до 30% на весь чек\n"
-            "Карта работает во всех 55+ магазинах по всему Таиланду."
-        ),
-        "btn_how_to_use": "ℹ️ Как использовать карту",
-
-        "loyalty_phone_invalid": "❌ Неверный формат. Используйте международный формат, например: +79123456789",
-        "loyalty_otp_sent": "📱 OTP-код отправлен на *{phone}*\n\nВведите 6-значный код:",
-        "loyalty_otp_invalid": "❌ Неверный OTP-код. Попробуйте ещё раз",
-        "loyalty_otp_attempts": "❌ Превышено число попыток.",
-        "loyalty_ask_age": "✅ Телефон подтверждён!\n\nВведите ваш возраст:",
-        "loyalty_age_invalid": "❌ Введите корректный возраст (1-120):",
-        "loyalty_ask_country": "🌍 Введите вашу страну (например: Россия, Таиланд, США):",
-        "loyalty_crm_error": "⚠️ Произошла техническая ошибка. Попробуйте позже или свяжитесь с менеджером.",
-        "show_card_hint": "Не забудьте предъявить в магазине свою карту лояльности, чтобы получить бонус",
-
-        # Новые ключи для REST API
+        "loyalty_phone_invalid": "❌ Неверный формат номера. Используйте международный формат, например: +66812345678",
+        "loyalty_otp_sent": "📱 OTP-код отправлен на {phone}\n\nВведите 6-значный код:",
+        "loyalty_otp_invalid": "❌ Неверный OTP-код. Попробуйте ещё раз или напишите /start для перезапуска.",
+        "loyalty_otp_attempts": "❌ Слишком много попыток. Напишите /start для перезапуска.",
         "loyalty_ask_name": "✅ Телефон подтверждён!\n\nВведите ваше полное имя:",
         "loyalty_name_invalid": "❌ Введите настоящее имя (минимум 2 символа):",
-        "loyalty_ask_tourist": "🌍 Вы приехали как турист?",
-        "loyalty_ask_thai_citizen": "🇹🇭 Вы гражданин Таиланда?",
+        "loyalty_ask_country": "🌍 Введите вашу страну (например: Таиланд, Россия, США):",
+        "loyalty_ask_tourist": "🌍 Вы приехали как турист?\n\nОтветьте: да / нет",
+        "loyalty_ask_thai_citizen": "🇹🇭 Вы гражданин Таиланда?\n\nОтветьте: да / нет",
         "btn_yes": "✅ Да",
         "btn_no": "❌ Нет",
         "btn_help": "🤖 Помощник ИИ",
         "btn_help_new_chat": "🔄 Новый диалог",
         "loyalty_success": (
-            "🎉 *Регистрация прошла успешно!*\n\n"
+            "🎉 Регистрация успешна!\n\n"
             "📱 Телефон: {phone}\n"
-            "🏷 Штрихкод карты: `{barcode}`\n\n"
-            "Покажите этот код в магазине для получения скидки!"
+            "🏷 Штрих-код карты лояльности: {barcode}\n\n"
+            "Покажите этот код в любом нашем магазине!"
         ),
         "loyalty_already_exists": (
-            "✅ *С возвращением!*\n\n"
+            "✅ Добро пожаловать обратно!\n\n"
             "📱 Телефон: {phone}\n"
-            "🏷 Штрихкод: `{barcode}`\n\n"
+            "🏷 Штрих-код: {barcode}\n\n"
             "Ваши данные обновлены."
         ),
-
-        "stores_request_geo": (
-            "📍 *Поиск ближайшего магазина*\n\n"
-            "Отправь свою геолокацию или выбери регион — покажем ближайшие магазины 🗺️"
-        ),
-        "btn_send_geo": "📍 Отправить геолокацию",
+        "loyalty_crm_error": "⚠️ Произошла техническая ошибка. Попробуйте позже или свяжитесь с менеджером.",
+        "show_card_hint": "\nНе забудьте показать карту лояльности в магазине для получения бонуса",
+        "stores_request_geo": "📍 Найти ближайший магазин\n\nПоделитесь геолокацией или выберите регион вручную:",
+        "btn_send_geo": "📍 Поделиться геолокацией",
         "btn_choose_region": "🗺 Выбрать регион",
         "stores_choose_region": "Выберите ваш регион:",
-        "stores_not_found": "😕 Рядом с тобой сейчас нет наших магазинов. Выбери регион вручную или напиши нам — поможем найти ближайшую точку.",
-        "stores_result": "📍 *Ближайшие магазины (найдено: {count}):*",
-        "btn_open_maps": "🗺 Открыть в Google Maps",
-        "store_card": (
-            "🏪 *{name}*\n"
-            "📍 {address}\n"
-            "🕐 {hours}\n"
-        ),
-
-        "manager_hello": (
-            "💬 *Чат с менеджером*\n\n"
-            "Сначала вам ответит AI-ассистент.\n"
-            "Напишите ваш вопрос:"
-        ),
-        "manager_offline": (
-            "🕐 Менеджеры работают с 10:00 до 18:00.\n\n"
-            "Вы можете оставить сообщение, и мы свяжемся с вами:"
-        ),
-        "manager_transfer": "🔄 Передаём вас живому менеджеру...",
+        "stores_not_found": "😔 Магазины не найдены. Попробуйте другой регион.",
+        "stores_result": "📍 Ближайшие магазины ({count} найдено):",
+        "btn_open_maps": "🗺 Google Maps",
+        "store_card": "🏪 {name}\n📍 {address}\n🕐 {hours}\n",
+        "manager_hello": "💬 Чат с менеджером\n\nНаш AI-ассистент ответит вам первым.\nЗадайте вопрос:",
+        "manager_offline": "🕐 Менеджеры работают с 10:00 до 18:00.\n\nОставьте сообщение, и мы свяжемся с вами:",
+        "manager_transfer": "🔄 Переключаю на живого менеджера...",
         "manager_transferred": "✅ Менеджер скоро ответит. Пожалуйста, подождите.",
         "manager_username_prompt": "👤 Вы можете написать нашему менеджеру напрямую в LINE: {line_id}",
         "manager_left_message": "✅ Ваше сообщение сохранено. Мы свяжемся с вами!",
         "btn_transfer_manager": "💬 Связаться с менеджером",
         "ai_error": "⚠️ AI-ассистент временно недоступен. Подключаем менеджера...",
         "about_text": (
-            "ℹ️ *О компании*\n\n"
-            "WeedeN — крупнейшая сеть cannabis-шопов в Таиланде 🌿\n\n"
-            "55+ магазинов в ключевых локациях: Бангкок, Пхукет, Ко Самуи, Паттайя и другие города. "
-            "Мы строим современную и здоровую cannabis-культуру — качественные продукты, дружелюбный сервис "
-            "и программа лояльности с реальными скидками до 30%.\n"
-            "🔗 Сайт: weeden.club\n\n"
+            "ℹ️ О нас\n\n"
+            "Мы ведущая розничная компания, предлагающая качественные товары.\n\n"
+            "📞 Поддержка: доступна 24/7 через этот бот."
         ),
-
-        "socials_text": "📲 Наш инстаграм: https://www.instagram.com/weedenthailand/",
+        "socials_text": "📲 Наши социальные сети\n\nПерейдите на нашу страницу со всеми ссылками:",
         "btn_open_socials": "🔗 Открыть соцсети",
         "error_generic": "⚠️ Что-то пошло не так. Попробуйте ещё раз.",
     },
 
     "th": {
         "welcome": "👋 ยินดีต้อนรับ! กรุณาเลือกภาษา:",
-        "lang_set": "✅ ตั้งค่าภาษาเป็นภาษาไทยแล้ว",
-        "main_menu": "🏠 *เมนูหลัก*\nเลือกหัวข้อ:",
+        "lang_set": "✅ ตั้งภาษาเป็นภาษาไทยแล้ว",
+        "main_menu": "🏠 เมนูหลัก\nเลือกตัวเลือกด้านล่าง:",
         "btn_stores": "📍 ค้นหาร้านใกล้เคียง",
-        "btn_find_store": "📍 ค้นหาร้านใกล้เคียง",
         "btn_loyalty": "🎁 รับบัตรสะสมแต้ม",
         "btn_manager": "💬 ติดต่อผู้จัดการ",
         "btn_about": "ℹ️ เกี่ยวกับเรา",
-        "btn_socials": "📲 โซเชียลมีเดียของเรา",
-        "btn_help": "🤖 ช่วยเหลือ (AI Assistant)",
-        "btn_help_clear": "🗑 ล้างประวัติการสนทนา",
-        "help_hello": (
-            "🤖 *AI ผู้ช่วย*\n\n"
-            "ยินดีต้อนรับ! ถามคำถามได้เลย แล้วเราจะตอบกลับอย่างรวดเร็ว!\n"
-            "พิมพ์อะไรก็ได้เพื่อเริ่มต้น!"
-        ),
-        "help_cleared": "✅ ล้างการสนทนาแล้ว เริ่มใหม่กันเลย!",
+        "btn_socials": "📲 โซเชียลของเรา",
         "btn_back": "⬅️ กลับ",
         "btn_main_menu": "🏠 เมนูหลัก",
         "btn_change_lang": "🌐 เปลี่ยนภาษา",
@@ -305,83 +207,52 @@ TEXTS = {
             "หากมีข้อสงสัยใด ๆ โปรดสอบถามได้เลย เราจะตอบกลับโดยเร็วที่สุด!\n\n"
             "พิมพ์คำถามด้านล่าง 👇"
         ),
-
-        # Reminders
-        "loyalty_reminder": "การสร้างบัตรสะสมแต้มเพื่อรับโบนัสที่ร้านค้าใดก็ได้ใช้เวลาเพียง 30 วินาที",
-        "after_phone_reminder": "กรอกข้อมูลลงทะเบียนให้ครบถ้วนเพื่อเปิดใช้งานโบนัส",
-        "loyalty5m_reminder": "หากไม่ลงทะเบียน คุณจะไม่สามารถรับโบนัสในร้านค้าได้",
-        "loyalty24h_reminder": "โบนัสส่วนลด 30% ของคุณยังรออยู่ 🎁 ลงทะเบียนเพื่อรับบัตรสมาชิกเลย!",
-
+        "loyalty_hint": "รับบัตรสะสมแต้มใน 30 วินาทีและรับโบนัส 🎁",
+        "loyalty_reminder": "ใช้เวลา 30 วินาทีในการสร้างบัตรสะสมแต้มเพื่อรับโบนัสในทุกร้าน",
+        "after_phone_reminder": "ลงทะเบียนให้เสร็จสิ้นเพื่อเปิดใช้งานโบนัสของคุณ",
+        "loyalty5m_reminder": "หากไม่ลงทะเบียน คุณจะไม่ได้รับรางวัลในร้านค้า",
+        "loyalty24h_reminder": "โบนัส -30% ของคุณยังคงรอ 🎁 ลงทะเบียนเพื่อรับบัตรสะสมแต้ม!",
         "loyalty_start": (
-            "🎁 *รับสิทธิ์พิเศษ ส่วนลด และบริการที่รวดเร็วยิ่งขึ้น*\n\n"
-            "กรุณาใส่หมายเลขโทรศัพท์ในรูปแบบสากล:\n"
+            "🎁 รับสิทธิ์เข้าถึงโบนัส ส่วนลด และบริการที่รวดเร็วขึ้น\n\n"
+            "กรุณากรอกหมายเลขโทรศัพท์ในรูปแบบสากล:\n"
             "ตัวอย่าง: +66812345678"
         ),
-        "loyalty_start_no_card_text": (
-            "🎁 *บัตรสะสมแต้มของฉัน*\n\n"
-            "เพื่อรับบัตร กรุณาใส่หมายเลขโทรศัพท์ในรูปแบบสากล:\n"
-            "ตัวอย่าง: +66812345678"
-        ),
-        "loyalty_already_have_card_text": (
-            "นี่คือบัตรของคุณ 🎁\n"
-            "หมายเลขบัตร: `{card_number}`\n"
-            "แสดงบาร์โค้ดที่จุดชำระเงินหรือแจ้งหมายเลขบัตรของคุณ — ใช้ได้ทั้งสองวิธี"
-        ),
-        "how_to_use_loyalty": (
-            "ง่ายๆ เพียง 👌\n"
-            "ไปที่จุดชำระเงินในร้าน WeedeN สาขาใดก็ได้\n"
-            "แสดงบาร์โค้ดหรือแจ้งหมายเลขบัตรของคุณ\n"
-            "พนักงานแคชเชียร์จะใช้ส่วนลด — สูงสุด 30% สำหรับยอดรวมทั้งหมด\n"
-            "บัตรนี้สามารถใช้ได้กับร้านค้ากว่า 55 สาขาทั่วประเทศไทย"
-        ),
-        "btn_how_to_use": "ℹ️ วิธีการใช้บัตร",
-
         "loyalty_phone_invalid": "❌ หมายเลขโทรศัพท์ไม่ถูกต้อง กรุณาใช้รูปแบบสากล เช่น +66812345678",
-        "loyalty_otp_sent": "📱 ส่งรหัส OTP ไปยัง *{phone}* แล้ว\n\nกรุณาใส่รหัส 6 หลัก:",
-        "loyalty_otp_invalid": "❌ รหัส OTP ไม่ถูกต้อง กรุณาลองอีกครั้ง",
-        "loyalty_otp_attempts": "❌ ลองผิดพลาดหลายครั้งเกินไป กรุณาเริ่มใหม่",
-        "loyalty_ask_age": "✅ ยืนยันเบอร์โทรแล้ว!\n\nกรุณาใส่อายุของคุณ:",
-        "loyalty_age_invalid": "❌ กรุณาใส่อายุที่ถูกต้อง (1-120):",
-        "loyalty_ask_country": "🌍 กรุณาใส่ประเทศของคุณ (เช่น Thailand, Russia):",
-        "loyalty_crm_error": "⚠️ เกิดข้อผิดพลาด กรุณาลองใหม่ภายหลังหรือติดต่อผู้จัดการ",
-        "show_card_hint": "อย่าลืมแสดงบัตรสะสมแต้มที่ร้านค้าเพื่อรับโบนัส",
-
-        # คีย์ใหม่สำหรับ REST API
-        "loyalty_ask_name": "✅ ยืนยันเบอร์โทรแล้ว!\n\nกรุณาใส่ชื่อ-นามสกุล:",
-        "loyalty_name_invalid": "❌ กรุณาใส่ชื่อจริง (อย่างน้อย 2 ตัวอักษร):",
-        "loyalty_ask_tourist": "🌍 คุณมาในฐานะนักท่องเที่ยวใช่ไหม?",
-        "loyalty_ask_thai_citizen": "🇹🇭 คุณเป็นพลเมืองไทยหรือไม่?",
+        "loyalty_otp_sent": "📱 ส่งรหัส OTP ไปยัง {phone} แล้ว\n\nกรุณากรอกรหัส 6 หลัก:",
+        "loyalty_otp_invalid": "❌ รหัส OTP ไม่ถูกต้อง กรุณาลองใหม่",
+        "loyalty_otp_attempts": "❌ ลองมากเกินไป กรุณาเริ่มใหม่ด้วย /start",
+        "loyalty_ask_name": "✅ ยืนยันหมายเลขโทรศัพท์แล้ว!\n\nกรุณากรอกชื่อเต็มของคุณ:",
+        "loyalty_name_invalid": "❌ กรุณากรอกชื่อจริง (อย่างน้อย 2 ตัวอักษร):",
+        "loyalty_ask_country": "🌍 กรุณากรอกประเทศของคุณ (เช่น Thailand, Russia, USA):",
+        "loyalty_ask_tourist": "🌍 คุณมาเที่ยวในฐานะนักท่องเที่ยวหรือไม่?\n\nตอบ: ใช่ / ไม่",
+        "loyalty_ask_thai_citizen": "🇹🇭 คุณเป็นคนไทยหรือไม่?\n\nตอบ: ใช่ / ไม่",
         "btn_yes": "✅ ใช่",
-        "btn_no": "❌ ไม่ใช่",
-        
+        "btn_no": "❌ ไม่",
         "loyalty_success": (
-            "🎉 *ลงทะเบียนสำเร็จ!*\n\n"
-            "📱 เบอร์โทร: {phone}\n"
-            "🏷 บาร์โค้ดบัตรสะสมแต้ม: `{barcode}`\n\n"
-            "แสดงรหัสนี้ที่ร้านเพื่อรับส่วนลด!"
+            "🎉 ลงทะเบียนสำเร็จ!\n\n"
+            "📱 โทรศัพท์: {phone}\n"
+            "🏷 บาร์โค้ดบัตรสะสมแต้ม: {barcode}\n\n"
+            "แสดงรหัสนี้ที่ร้านค้าของเราเพื่อรับส่วนลด!"
         ),
         "loyalty_already_exists": (
-            "✅ *ยินดีต้อนรับกลับมา!*\n\n"
-            "📱 เบอร์โทร: {phone}\n"
-            "🏷 บาร์โค้ด: `{barcode}`\n\n"
+            "✅ ยินดีต้อนรับกลับ!\n\n"
+            "📱 โทรศัพท์: {phone}\n"
+            "🏷 บาร์โค้ด: {barcode}\n\n"
             "อัปเดตข้อมูลของคุณแล้ว"
         ),
-
-        "stores_request_geo": (
-            "📍 *ค้นหาร้านใกล้เคียง*\n\n"
-            "แชร์ตำแหน่งหรือเลือกภูมิภาคด้วยตนเอง 🗺️"
-        ),
+        "loyalty_crm_error": "⚠️ เกิดข้อผิดพลาดทางเทคนิค กรุณาลองใหม่ภายหลัง",
+        "show_card_hint": "\nอย่าลืมแสดงบัตรสะสมแต้มที่ร้านเพื่อรับโบนัส",
+        "stores_request_geo": "📍 ค้นหาร้านใกล้เคียง\n\nแชร์ตำแหน่งของคุณหรือเลือกภูมิภาค:",
         "btn_send_geo": "📍 แชร์ตำแหน่ง",
         "btn_choose_region": "🗺 เลือกภูมิภาค",
-        "stores_choose_region": "กรุณาเลือกภูมิภาคของคุณ:",
-        "stores_not_found": "😕 ขณะนี้ยังไม่มีร้านค้าใกล้คุณ เลือกภูมิภาคด้วยตนเองหรือทักแชทหาเรา — เราจะช่วยคุณค้นหาสาขาที่ใกล้ที่สุด",
-        "stores_result": "📍 *ร้านค้าใกล้เคียง (พบ {count} แห่ง):*",
-        "btn_open_maps": "🗺 เปิดใน Google Maps",
-        "store_card": "🏪 *{name}*\n📍 {address}\n🕐 {hours}\n",
-
-        "manager_hello": "💬 *แชทกับผู้จัดการ*\n\nผู้ช่วย AI จะตอบก่อน\nพิมพ์คำถามของคุณ:",
-        "manager_offline": "🕐 ผู้จัดการทำงานตั้งแต่ 10:00 ถึง 18:00\n\nคุณสามารถฝากข้อความไว้ได้:",
-        "manager_transfer": "🔄 กำลังโอนไปยังผู้จัดการ...",
+        "stores_choose_region": "เลือกภูมิภาคของคุณ:",
+        "stores_not_found": "😔 ไม่พบร้านค้าในบริเวณนี้ ลองภูมิภาคอื่น",
+        "stores_result": "📍 ร้านค้าใกล้เคียง ({count} แห่ง):",
+        "btn_open_maps": "🗺 Google Maps",
+        "store_card": "🏪 {name}\n📍 {address}\n🕐 {hours}\n",
+        "manager_hello": "💬 แชทกับผู้จัดการ\n\nผู้ช่วย AI จะตอบคุณก่อน\nพิมพ์คำถามของคุณ:",
+        "manager_offline": "🕐 ผู้จัดการทำงานตั้งแต่ 10:00 - 18:00\n\nฝากข้อความได้เลย:",
+        "manager_transfer": "🔄 กำลังโอนสายไปยังผู้จัดการ...",
         "manager_transferred": "✅ ผู้จัดการจะตอบในไม่ช้า กรุณารอสักครู่",
         "manager_username_prompt": "👤 คุณสามารถติดต่อผู้จัดการของเราโดยตรงใน LINE: {line_id}",
         "manager_left_message": "✅ บันทึกข้อความแล้ว เราจะติดต่อกลับ!",
@@ -391,18 +262,15 @@ TEXTS = {
         "btn_help_new_chat": "🔄 เริ่มการสนทนาใหม่",
 
         "about_text": (
-            "ℹ️ *เกี่ยวกับเรา*\n\n"
-            "WeedeN คือเครือข่ายร้านกัญชาที่ใหญ่ที่สุดในประเทศไทย 🌿\n\n"
-            "มีมากกว่า 55 สาขาในพื้นที่สำคัญ: กรุงเทพฯ, ภูเก็ต, เกาะสมุย, พัทยา และเมืองอื่นๆ "
-            "เรากำลังสร้างวัฒนธรรมกัญชาที่ทันสมัยและดีต่อสุขภาพ — สินค้าคุณภาพ บริการเป็นกันเอง "
-            "และโปรแกรมสะสมแต้มที่ให้ส่วนลดสูงสุดถึง 30%\n"
-            "🔗 เว็บไซต์: weeden.club\n\n"
+            "ℹ️ เกี่ยวกับเรา\n\n"
+            "เราเป็นบริษัทค้าปลีกชั้นนำที่มีสินค้าคุณภาพ\n\n"
+            "🌐 ร้านค้าของเราอยู่ในหลายประเทศ\n"
+            "📞 การสนับสนุน: 24/7 ผ่านบอทนี้"
         ),
-
-        "socials_text": "📲 อินสตาแกรมของเรา: https://www.instagram.com/weedenthailand/",
-        "btn_open_socials": "🔗 เปิดโซเชียลมีเดีย",
-        "error_generic": "⚠️ เกิดข้อผิดพลาด กรุณาลองอีกครั้ง",
-    }
+        "socials_text": "📲 โซเชียลมีเดียของเรา\n\nเยี่ยมชมหน้าลิงก์ทั้งหมดของเรา:",
+        "btn_open_socials": "🔗 เปิดลิงก์โซเชียล",
+        "error_generic": "⚠️ เกิดข้อผิดพลาด กรุณาลองใหม่",
+    },
 }
 
 
