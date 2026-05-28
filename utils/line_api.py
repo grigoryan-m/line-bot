@@ -125,9 +125,9 @@ def push_main_menu(user_id: str, text: str, lang: str) -> bool:
                 {"type": "text", "text": text, "wrap": True, "weight": "bold", "size": "md"},
                 btn("btn_stores", "menu:stores"),
                 btn("btn_loyalty", "menu:loyalty"),
+                btn("btn_help", "menu:help"),
                 btn("btn_about", "menu:about"),
                 btn("btn_socials", "menu:socials"),
-                btn("btn_help", "menu:help"),
                 btn("btn_change_lang", "menu:lang"),
             ]
         }

@@ -73,8 +73,8 @@ TEXTS = {
         "stores_result": "📍 Nearest stores ({count} found):",
         "btn_open_maps": "🗺 Google Maps",
         "store_card": "🏪 {name}\n📍 {address}\n🕐 {hours}\n",
-        "btn_help": "🤖 AI Help",
-        "btn_help_new_chat": "🔄 New chat",
+        "btn_help": "🤖 AI Assistant",
+        "btn_help_new_chat": "🔄 New conversation",
         # Manager
         "manager_hello": (
             "💬 Manager Chat\n\n"
@@ -89,7 +89,7 @@ TEXTS = {
         "manager_transferred": "✅ A manager will respond shortly. Please wait.",
         "manager_username_prompt": "👤 You can contact our manager directly on LINE: {line_id}",
         "manager_left_message": "✅ Your message has been saved. We'll contact you soon!",
-        "btn_transfer_manager": "👤 Talk to a human",
+        "btn_transfer_manager": "💬 Contact manager",
         "ai_error": "⚠️ AI assistant is temporarily unavailable. Connecting you to a manager...",
         # About
         "about_text": (
@@ -147,7 +147,7 @@ TEXTS = {
         "btn_yes": "✅ Да",
         "btn_no": "❌ Нет",
         "btn_help": "🤖 Помощник ИИ",
-        "btn_help_new_chat": "🔄 Новый чат",
+        "btn_help_new_chat": "🔄 Новый диалог",
         "loyalty_success": (
             "🎉 Регистрация успешна!\n\n"
             "📱 Телефон: {phone}\n"
@@ -176,7 +176,7 @@ TEXTS = {
         "manager_transferred": "✅ Менеджер скоро ответит. Пожалуйста, подождите.",
         "manager_username_prompt": "👤 Вы можете написать нашему менеджеру напрямую в LINE: {line_id}",
         "manager_left_message": "✅ Ваше сообщение сохранено. Мы свяжемся с вами!",
-        "btn_transfer_manager": "👤 Поговорить с менеджером",
+        "btn_transfer_manager": "💬 Связаться с менеджером",
         "ai_error": "⚠️ AI-ассистент временно недоступен. Подключаем менеджера...",
         "about_text": (
             "ℹ️ О нас\n\n"
@@ -256,10 +256,10 @@ TEXTS = {
         "manager_transferred": "✅ ผู้จัดการจะตอบในไม่ช้า กรุณารอสักครู่",
         "manager_username_prompt": "👤 คุณสามารถติดต่อผู้จัดการของเราโดยตรงใน LINE: {line_id}",
         "manager_left_message": "✅ บันทึกข้อความแล้ว เราจะติดต่อกลับ!",
-        "btn_transfer_manager": "👤 คุยกับคนจริงๆ",
+        "btn_transfer_manager": "💬 ติดต่อผู้จัดการ",
         "ai_error": "⚠️ AI ไม่พร้อมใช้งานชั่วคราว กำลังเชื่อมต่อผู้จัดการ...",
         "btn_help": "🤖 ผู้ช่วย AI",
-        "btn_help_new_chat": "🔄 แชทใหม่",
+        "btn_help_new_chat": "🔄 เริ่มการสนทนาใหม่",
 
         "about_text": (
             "ℹ️ เกี่ยวกับเรา\n\n"
