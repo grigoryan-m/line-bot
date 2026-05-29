@@ -61,12 +61,12 @@ def find_stores_by_location(lat, lon, radius_km=SEARCH_RADIUS_KM):
                 copy["distance_km"] = round(dist, 2)
                 results.append(copy)
     results.sort(key=lambda x: x["distance_km"])
-    return results[:5]
+    return results
 
 
 def find_stores_by_region(region):
     stores = _load_stores()
-    return [s for s in stores if region.lower() in s.get("region", "").lower()][:5]
+    return [s for s in stores if region.lower() in s.get("region", "").lower()]
 
 
 def _get_unique_regions():
