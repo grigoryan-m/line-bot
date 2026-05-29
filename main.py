@@ -61,11 +61,14 @@ app.include_router(_wh_module.app.router)
 # ─── Signature verification ────────────────────────────────────────────────
 
 def verify_signature(body: bytes, signature: str) -> bool:
+    import hmac, hashlib, base64
+    secret = LINE_CHANNEL_SECRET
     computed = base64.b64encode(
-        hmac.new(LINE_CHANNEL_SECRET.encode(), body, hashlib.sha256).digest()
+        hmac.new(secret.encode(), body, hashlib.sha256).digest()
     ).decode()
+    print("COMPUTED:", repr(computed[:20]))
+    print("MATCH:", computed == signature)
     return computed == signature
-
 
 # ─── Routing postback data ─────────────────────────────────────────────────
 
