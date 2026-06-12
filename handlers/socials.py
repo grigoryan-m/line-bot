@@ -1,8 +1,16 @@
 from config import SOCIALS_URL
 from locales.texts import t
 from utils import user_data as ud
+from utils.line_api import (
+    push_text,
+    push_back_to_menu,
+    push_location_request,
+    push_regions,
+    push_messages,
+    _send,
+)
 
-
+LINE_PUSH_URL = "https://api.line.me/v2/bot/message/push"
 async def handle_socials(user_id: str):
     lang = ud.get_lang(user_id)
     from locales.texts import t as _t
