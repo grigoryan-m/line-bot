@@ -73,11 +73,12 @@ async def _process_phone(user_id: str, phone_raw: str, lang: str):
         phone = "+" + phone
 
     ud.update_data(user_id, phone=phone)
-    otp = generate_otp(phone)
-    send_otp_sms(phone, otp)
+    # otp = generate_otp(phone)
+    # send_otp_sms(phone, otp)
 
-    ud.set_state(user_id, "loyalty:otp")
-    push_text(user_id, t(lang, "loyalty_otp_sent", phone=phone))
+    # ud.set_state(user_id, "loyalty:otp")
+    ud.set_state(user_id, "loyalty:name")
+    push_text(user_id, t(lang, "loyalty_ask_name", phone=phone))
 
 
 # ── Шаг 2: OTP ─────────────────────────────────────────────────────────────
