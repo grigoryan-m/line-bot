@@ -9,7 +9,7 @@ _PLATFORM_MAP = {"telegram", "whatsapp", "line"}
 _LANG_MAP = {"en": "eng", "ru": "ru", "thai": "thai"}
 
 
-def get_loyalty_card(phone: str, lang: str) -> Optional[Dict[str, Any]]:
+def get_loyalty_card(phone: str, lang: str, name: str) -> Optional[Dict[str, Any]]:
     """
     Получает данные существующей карты лояльности по номеру телефона.
     Использует идемпотентный эндпоинт /api/client/register — он возвращает
@@ -21,11 +21,12 @@ def get_loyalty_card(phone: str, lang: str) -> Optional[Dict[str, Any]]:
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {os.getenv('ODOO_API_TOKEN', '')}",
-        "X-Odoo-Database": f"{os.getenv('ODOO_HEADER', '')}",
+        # "X-Odoo-Database": f"{os.getenv('ODOO_HEADER', '')}",
     }
     payload = {
         "phone": phone,
         "lang": api_lang,
+        "name": name,
         "bot_platform": "line",
     }
 
@@ -78,7 +79,7 @@ def register_customer(
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {os.getenv('ODOO_API_TOKEN', '')}",
-        "X-Odoo-Database": f"{os.getenv('ODOO_HEADER', '')}",
+        # "X-Odoo-Database": f"{os.getenv('ODOO_HEADER', '')}",
     }
 
     try:
