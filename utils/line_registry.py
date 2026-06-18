@@ -62,5 +62,13 @@ def get_user_id(phone: str) -> Optional[str]:
     return _registry.get(_normalize(phone))
 
 
+def get_phone(line_user_id: str) -> Optional[str]:
+    """Возвращает номер телефона по LINE userId или None (обратный поиск)."""
+    for phone, uid in _registry.items():
+        if uid == line_user_id:
+            return phone
+    return None
+
+
 # Загружаем при импорте модуля
 _load()
