@@ -12,7 +12,7 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyBRR_WRhDRlVLKhgeA8Wfe-EjdQlO
 
 ODOO_URL = os.getenv("ODOO_URL", "")
 ODOO_API_TOKEN = os.getenv("ODOO_API_TOKEN", "")
-
+ODOO_HEADER = os.getenv("ODOO_HEADER", "")
 MANAGER_LINE_USER_ID = os.getenv("MANAGER_LINE_USER_ID", "")
 MANAGER_LINE_ID = os.getenv("MANAGER_LINE_ID", "")  # LINE ID менеджера (отображается пользователю)
 MANAGER_WORK_START = int(os.getenv("MANAGER_WORK_START", "10"))

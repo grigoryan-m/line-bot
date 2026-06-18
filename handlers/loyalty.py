@@ -12,9 +12,9 @@ from locales.texts import t
 from utils import user_data as ud
 from utils.line_api import push_text, push_yes_no, push_back_to_menu, push_image
 from utils.otp import generate_otp, verify_otp, send_otp_sms
-from utils.odoo import register_customer
+from utils.odoo import register_customer, get_loyalty_card
 from utils.api_client import register_channel
-from utils.line_registry import bind as registry_bind   # ← новое
+from utils.line_registry import bind as registry_bind, get_phone, get_name
 from webhook_api import flush_pending                    # ← новое
 from config import PIXEL_ID, ACCESS_TOKEN
 
@@ -26,6 +26,35 @@ META_ADS_URL = f"https://graph.facebook.com/v19.0/{PIXEL_ID}/events"
 
 async def loyalty_start(user_id: str):
     lang = ud.get_lang(user_id)
+
+    # Проверяем, зарегистрирован ли пользователь (есть ли привязанный телефон)
+    phone = get_phone(user_id)
+    if phone:
+        logger.info(f"[{user_id}] already registered, phone={phone} — showing card")
+        push_text(user_id, t(lang, "loading"))
+        result = get_loyalty_card(phone, lang, name=get_name(user_id))
+
+        if result is not None:
+            messages = result.get("content", {}).get("messages", [])
+            api_message = None
+            barcode = None
+            for msg in messages:
+                if msg.get("type") == "text":
+                    api_message = msg.get("text")
+                elif msg.get("type") == "image":
+                    barcode = msg.get("url")
+
+            if api_message:
+                push_back_to_menu(user_id, api_message, lang)
+            if barcode:
+                push_image(user_id, barcode)
+            if api_message or barcode:
+                return
+
+        # Если API недоступно — показываем карту из кэша или fallback
+        logger.warning(f"[{user_id}] get_loyalty_card failed, starting registration flow")
+
+    # Пользователь не зарегистрирован — запускаем флоу регистрации
     ud.set_state(user_id, "loyalty:phone")
     push_text(user_id, t(lang, "loyalty_start"))
 
@@ -185,7 +214,7 @@ async def _finalize(user_id: str, lang: str):
     await register_channel(phone, user_id)
 
     # Привязываем LINE userId к телефону локально (для Odoo purchase webhook)
-    registry_bind(phone, user_id)   # ← новое: сохраняем phone → line_user_id
+    registry_bind(phone, user_id, name=name)  # сохраняем phone → user_id + имя
 
     # Отправляем отложенные purchase-уведомления, если они уже пришли от Odoo
     flush_pending(phone)             # ← новое: обрабатываем pending-очередь
