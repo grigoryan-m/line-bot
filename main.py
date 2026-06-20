@@ -129,6 +129,15 @@ async def route_text(user_id: str, text: str):
     if text.strip() in {"/start", "start"}:
         await handle_start(user_id)
         return
+
+    # /start <param>  →  диплинк с телефоном или Binom clickid-fbclid
+    # (аналог `/start <arg>` в Telegram, см. handlers/start.py: handle_start)
+    stripped = text.strip()
+    if stripped.lower().startswith("/start ") or stripped.lower().startswith("start "):
+        param = stripped.split(maxsplit=1)[1].strip()
+        await handle_start(user_id, param)
+        return
+
     if text.strip() in {"/menu", "menu"}:
         await handle_main_menu(user_id)
         return
@@ -214,8 +223,13 @@ async def webhook(request: Request, x_line_signature: str = Header(None)):
             await route_postback(user_id, postback_data)
 
         elif event_type == "follow":
-            logger.info(f"[{user_id}] new follower")
-            await handle_start(user_id)
+            # При переходе из рекламы LINE (LINE Ads) событие follow может
+            # содержать объект referral с параметром data — аналог
+            # параметра диплинка `/start <arg>` в Telegram (clickid-fbclid).
+            referral = event.get("referral") or {}
+            referral_param = referral.get("data")
+            logger.info(f"[{user_id}] new follower, referral={referral_param}")
+            await handle_start(user_id, referral_param)
 
     return {"status": "ok"}
 
