@@ -10,14 +10,15 @@ Telegram chat_id здесь строковый LINE userId (формат: U + 32
 import json
 import logging
 import os
-from typing import Optional
+from typing import Any, Optional
 
 logger = logging.getLogger(__name__)
 
 _REGISTRY_PATH = os.path.join(os.path.dirname(__file__), "../data/line_registry.json")
 
-# In-memory кэш: { "normalized_phone": "Uxxxxxxxxx..." }
-_registry: dict[str, str] = {}
+# In-memory кэш: { "normalized_phone": {"user_id": "Uxxx...", "name": "John"} }
+# Старые записи в формате строки поддерживаются для обратной совместимости.
+_registry: dict[str, Any] = {}
 
 
 def _normalize(phone: str) -> str:
@@ -49,17 +50,51 @@ def _save() -> None:
         logger.error("line_registry: save error: %s", e)
 
 
-def bind(phone: str, line_user_id: str) -> None:
-    """Привязывает номер телефона к LINE userId."""
+def _entry_user_id(entry: Any) -> Optional[str]:
+    """Читает user_id из записи любого формата (строка или dict)."""
+    if isinstance(entry, dict):
+        return entry.get("user_id")
+    return entry  # старый формат: просто строка
+
+
+def _entry_name(entry: Any) -> str:
+    """Читает имя из записи (пусто для старого формата)."""
+    if isinstance(entry, dict):
+        return entry.get("name", "")
+    return ""
+
+
+def bind(phone: str, line_user_id: str, name: str = "") -> None:
+    """Привязывает телефон к LINE userId, сохраняя имя."""
     key = _normalize(phone)
-    _registry[key] = line_user_id
+    existing = _registry.get(key)
+    _registry[key] = {
+        "user_id": line_user_id,
+        "name": name or _entry_name(existing),  # не затираем имя если уже есть
+    }
     _save()
-    logger.info("line_registry: bound phone=%s → line_user_id=%s", key, line_user_id)
+    logger.info("line_registry: bound phone=%s → user_id=%s name=%r", key, line_user_id, name)
 
 
 def get_user_id(phone: str) -> Optional[str]:
     """Возвращает LINE userId по номеру телефона или None."""
-    return _registry.get(_normalize(phone))
+    return _entry_user_id(_registry.get(_normalize(phone)))
+
+
+def get_phone(line_user_id: str) -> Optional[str]:
+    """Возвращает номер телефона по LINE userId или None (обратный поиск)."""
+    for phone, entry in _registry.items():
+        if _entry_user_id(entry) == line_user_id:
+            return phone
+    return None
+
+
+def get_name(line_user_id: str) -> str:
+    """Возвращает сохранённое имя пользователя по LINE userId."""
+    for entry in _registry.values():
+        if _entry_user_id(entry) == line_user_id:
+            return _entry_name(entry)
+    return ""
 
 
 # Загружаем при импорте модуля
