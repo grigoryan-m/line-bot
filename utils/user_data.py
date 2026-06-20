@@ -9,6 +9,12 @@ from typing import Optional, Any
 # {user_id: {"lang": "en", "state": "...", "data": {}}}
 _users: dict[str, dict] = {}
 
+# Аналог _binom_clickid / _fbclid из Telegram-бота (utils/user_data.py).
+# Хранят клик-айди Binom и fbclid, полученные из параметра диплинка /start,
+# до завершения регистрации в программе лояльности (отправка лида).
+_binom_clickid: dict[str, str] = {}
+_fbclid: dict[str, str] = {}
+
 
 def get_lang(user_id: str) -> str:
     return _users.get(user_id, {}).get("lang", "en")
@@ -18,6 +24,22 @@ def set_lang(user_id: str, lang: str):
     if user_id not in _users:
         _users[user_id] = {}
     _users[user_id]["lang"] = lang
+
+
+def set_binom_clickid(user_id: str, clickid: str) -> None:
+    _binom_clickid[user_id] = clickid
+
+
+def get_binom_clickid(user_id: str) -> Optional[str]:
+    return _binom_clickid.get(user_id)
+
+
+def set_fbclid(user_id: str, fbclid: str) -> None:
+    _fbclid[user_id] = fbclid
+
+
+def get_fbclid(user_id: str) -> Optional[str]:
+    return _fbclid.get(user_id)
 
 
 def get_state(user_id: str) -> Optional[str]:

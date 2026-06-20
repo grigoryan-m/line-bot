@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 
 PHONE_REGEX = re.compile(r"^\+?[1-9]\d{7,14}$")
 META_ADS_URL = f"https://graph.facebook.com/v19.0/{PIXEL_ID}/events"
+BINOM_POSTBACK_BASE = "https://wdn-family.com/c6ixl2k.php"
 
 
 async def loyalty_start(user_id: str):
@@ -229,28 +230,54 @@ async def _finalize(user_id: str, lang: str):
         elif msg.get("type") == "image":
             barcode = msg.get("url")
 
+    # ── Lead-события: Meta Ads Manager (CAPI) + Binom postback ──────────────
+    # Идентично Telegram-боту (handlers/loyalty.py): вызываются сразу после
+    # успешной регистрации в Odoo, до отправки ответа пользователю.
+    fbclid = ud.get_fbclid(user_id)
+    send_meta_ads_info(phone, user_id, fbclid)
+    fire_binom_postback(user_id)
+
     if api_message:
         push_back_to_menu(user_id, api_message, lang)
     if barcode:
         push_image(user_id, barcode)
-    if not api_message:
+    if not api_message and not barcode:
         logger.error(f"Unexpected Odoo API response: {result}")
         push_back_to_menu(user_id, t(lang, "loyalty_crm_error"), lang)
 
-    send_meta_ads_info(phone)
+
+def fire_binom_postback(user_id: str):
+    """Отправить постбэк в Binom об одобренной конверсии (аналог Telegram-бота)."""
+    clickid = ud.get_binom_clickid(user_id)
+    if not clickid:
+        return
+    try:
+        requests.get(
+            BINOM_POSTBACK_BASE,
+            params={"cnv_id": clickid, "cnv_status": "approved"},
+            timeout=5
+        )
+        logger.info(f"[binom] postback sent clickid={clickid}")
+    except Exception as e:
+        logger.error(f"[binom] postback error: {e}")
 
 
-def send_meta_ads_info(phone: str):
-    """Send CompleteRegistration event to Meta Ads Manager."""
+def send_meta_ads_info(phone: str, user_id: str = "", fbclid: str = None):
+    """Send Lead event to Meta Ads Manager (CAPI). Аналог Telegram-бота."""
+    user_data = {
+        "ph": hashlib.sha256(phone.encode()).hexdigest(),
+        "external_id": hashlib.sha256(str(user_id).encode()).hexdigest()
+    }
+    if fbclid:
+        user_data["fbc"] = f"fb.1.{int(time.time())}.{fbclid}"
+
     payload = {
         "data": [
             {
-                "event_name": "CompleteRegistration",
+                "event_name": "Lead",
                 "event_time": int(time.time()),
                 "action_source": "system_generated",
-                "user_data": {
-                    "ph": hashlib.sha256(phone.encode()).hexdigest()
-                },
+                "user_data": user_data
             }
         ]
     }
@@ -258,9 +285,8 @@ def send_meta_ads_info(phone: str):
         response = requests.post(
             META_ADS_URL,
             params={"access_token": ACCESS_TOKEN},
-            json=payload,
-            timeout=10,
+            json=payload
         )
-        logger.info(f"[MetaAds] Response: {response.json()}")
+        logger.info(f"Meta Ads response: {response.json()}")
     except Exception as e:
-        logger.error(f"[MetaAds] Failed to send event: {e}")
+        logger.error(f"Failed to send Meta Ads event: {e}")

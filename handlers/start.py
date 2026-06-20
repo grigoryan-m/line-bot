@@ -13,14 +13,38 @@ from webhook_api import flush_pending
 logger = logging.getLogger(__name__)
 
 
-async def handle_start(user_id: str):
+async def handle_start(user_id: str, param: str = None):
     """
     Вход в бот — аналог /start в Telegram.
     Сбрасывает состояние и показывает выбор языка.
+
+    param — необязательный аргумент диплинка (аналог `/start <arg>` в Telegram):
+      • если это телефон (начинается с '+' или состоит из цифр) —
+        привязываем chat/userId к номеру в BotsAPI и отдаём pending-уведомления;
+      • иначе считаем это Binom click ID, опционально с fbclid через дефис:
+        "clickid-fbclid" — сохраняем для последующей отправки лида
+        в Meta Ads Manager и постбэка в Binom при регистрации в loyalty.
     """
     ud.clear_state(user_id)
     lang = ud.get_lang(user_id)
-    logger.info(f"[{user_id}] handle_start, lang={lang}")
+    logger.info(f"[{user_id}] handle_start, lang={lang}, param={param}")
+
+    if param:
+        arg = param.strip()
+        if arg.startswith("+") or arg.isdigit():
+            # Телефон: начинается с + или только цифры
+            phone = arg
+            await register_channel(phone, user_id)
+            registry_bind(phone, user_id)
+            flush_pending(phone)
+        else:
+            # Binom click ID, опционально fbclid: "clickid-fbclid"
+            parts = arg.split("-", 1)
+            ud.set_binom_clickid(user_id, parts[0])
+            if len(parts) > 1:
+                ud.set_fbclid(user_id, parts[1])
+            logger.info(f"[{user_id}] binom clickid={parts[0]} fbclid={parts[1] if len(parts) > 1 else None}")
+
     push_language_select(user_id)
 
 
