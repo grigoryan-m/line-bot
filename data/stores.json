@@ -99,20 +99,6 @@
     "photo_url": null
   },
   {
-    "id": 8,
-    "name": "PK 006 Patong OTOP",
-    "address": "Patong OTOP (13:00 - 01:00)",
-    "region": "Phuket",
-    "hours": "13:00 - 01:00",
-    "focus": "x",
-    "revenue": 1.5,
-    "lat": 7.887454912445379,
-    "lon": 98.29550650674231,
-    "google_maps_url": "https://maps.app.goo.gl/G86SAsrDCmrcijdR6",
-    "yandex_maps_url": null,
-    "photo_url": null
-  },
-  {
     "id": 9,
     "name": "PK 020 Karon Patak",
     "address": "Karon Patak (13:00 - 01:00, 3 PS)",
@@ -138,20 +124,6 @@
     "lon": 98.29441271534327,
     "google_maps_url": "https://maps.app.goo.gl/iH8wQzwhUxqbSsvf7",
     "yandex_maps_url": "https://yandex.com/maps/org/140484553325",
-    "photo_url": null
-  },
-  {
-    "id": 11,
-    "name": "PK 024 KoKaeo RoyalMarina",
-    "address": "KoKaeo RoyalMarina (08:00 - 20:00, 1 PS)",
-    "region": "Phuket",
-    "hours": "08:00 - 20:00",
-    "focus": null,
-    "revenue": null,
-    "lat": 7.967300831935918,
-    "lon": 98.39091038650743,
-    "google_maps_url": "https://maps.app.goo.gl/6u5wSte8UoUyvbPU9",
-    "yandex_maps_url": null,
     "photo_url": null
   },
   {
