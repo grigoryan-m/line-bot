@@ -7,12 +7,10 @@ from typing import Optional
 from fastapi import FastAPI, HTTPException, Header
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, field_validator
-
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi import APIRouter
 logger = logging.getLogger(__name__)
-
-# ─── FastAPI app ──────────────────────────────────────────────────────────────
-app = FastAPI(title="WeedeN LINE Bot Webhook API", version="1.1.0")
-
+router = APIRouter()
 # ─── Секрет для защиты endpoint'а ─────────────────────────────────────────────
 WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET", "")
 
@@ -144,7 +142,7 @@ class PurchaseWebhook(BaseModel):
         return v if v in {"en", "ru", "thai"} else "en"
 
 
-@app.post("/odoo/purchase")
+@router.post("/odoo/purchase")
 async def odoo_purchase(
     payload: PurchaseWebhook,
     x_api_key: Optional[str] = Header(default=None, alias="X-API-Key"),
@@ -176,6 +174,80 @@ async def odoo_purchase(
     )
 
 
-@app.get("/health")
+@router.get("/health")
 async def health():
     return {"status": "ok"}
+
+class BroadcastRequest(BaseModel):
+    text: str
+    photo: str | None = None
+    video: str | None = None
+    lang: str | None = None
+    delay: float = 0.05
+
+@router.post("/broadcast")
+async def broadcast(
+    payload: BroadcastRequest,
+    x_api_key: Optional[str] = Header(default=None, alias="X-API-Key"),
+):
+    if WEBHOOK_SECRET and x_api_key != WEBHOOK_SECRET:
+        raise HTTPException(status_code=401, detail="Invalid or missing X-API-Key")
+
+    from utils.line_registry import get_all_users
+    from utils.line_api import push_text, push_image, push_video
+
+    users = get_all_users()
+
+    sent = 0
+    failed = 0
+
+    for user in users:
+
+        if payload.lang and user["lang"] != payload.lang:
+            continue
+
+        try:
+
+            ok = True
+
+            if payload.photo:
+                ok &= push_image(
+                    user["line_user_id"],
+                    payload.photo,
+                )
+
+            if payload.video:
+                preview = payload.photo or "https://dummyimage.com/640x360/cccccc/000000.jpg&text=Video"
+
+                ok &= push_video(
+                    user["line_user_id"],
+                    payload.video,
+                    preview,
+                )
+
+            if payload.text:
+                ok &= push_text(
+                    user["line_user_id"],
+                    payload.text,
+                )
+
+            if ok:
+                sent += 1
+            else:
+                failed += 1
+
+        except Exception:
+            logger.exception(
+                "Broadcast failed for %s",
+                user["line_user_id"],
+            )
+            failed += 1
+
+        await asyncio.sleep(payload.delay)
+
+    return {
+        "status": "done",
+        "sent": sent,
+        "failed": failed,
+        "total": sent + failed,
+    }

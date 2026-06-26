@@ -300,3 +300,15 @@ def push_image(user_id: str, image_url: str) -> bool:
             "previewImageUrl": image_url,
         }]
     })
+def push_video(user_id: str, video_url: str, preview_url: str) -> bool:
+    return _send(
+        LINE_PUSH_URL,
+        {
+            "to": user_id,
+            "messages": [{
+                "type": "video",
+                "originalContentUrl": video_url,
+                "previewImageUrl": preview_url,
+            }]
+        }
+    )
