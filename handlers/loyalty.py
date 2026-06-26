@@ -215,7 +215,7 @@ async def _finalize(user_id: str, lang: str):
     await register_channel(phone, user_id)
 
     # Привязываем LINE userId к телефону локально (для Odoo purchase webhook)
-    registry_bind(phone, user_id, name=name)  # сохраняем phone → user_id + имя
+    registry_bind(phone, user_id, name=name, lang=lang)  # сохраняем phone → user_id + имя
 
     # Отправляем отложенные purchase-уведомления, если они уже пришли от Odoo
     flush_pending(phone)             # ← новое: обрабатываем pending-очередь

@@ -43,6 +43,9 @@ from handlers.manager import (
 from handlers.about import handle_about
 from handlers.socials import handle_socials
 from handlers.help import help_start, handle_help_message, handle_contact_manager
+from fastapi.middleware.cors import CORSMiddleware
+from webhook_api import router as webhook_router
+
 
 # ── Подключаем Odoo purchase webhook ──────────────────────────────────────────
 # Импортируем app из webhook_api и монтируем его роуты в основной FastAPI app.
@@ -53,9 +56,25 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="LINE Bot")
+if os.getenv("ENV") == "development":
+    origins = [
+        "http://localhost:5500",
+        "http://127.0.0.1:5500",
+    ]
+else:
+    origins = [
+        os.getenv("ADMIN_URL", "http://localhost:5500"),
+    ]
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 # Монтируем все роуты из webhook_api (/odoo/purchase, /health) в основной app
-app.include_router(_wh_module.app.router)
+app.include_router(_wh_module.router)
 
 
 # ─── Signature verification ────────────────────────────────────────────────
@@ -152,12 +171,13 @@ async def route_text(user_id: str, text: str):
             # Также сохраняем в локальный реестр для Odoo webhook
             from utils.line_registry import bind as registry_bind
             from webhook_api import flush_pending
-            registry_bind(phone, user_id)
-            flush_pending(phone)
-
             from utils.line_api import push_text
             from utils.user_data import get_lang
             lang = get_lang(user_id)
+            registry_bind(phone, user_id, "", lang)
+            flush_pending(phone)
+
+            
             if ok:
                 push_text(user_id, "✅ Ваш аккаунт привязан! Теперь мы сможем присылать вам уведомления." if lang == "ru"
                           else "✅ Account linked! We can now send you notifications.")

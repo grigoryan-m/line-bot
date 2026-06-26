@@ -62,15 +62,25 @@ def _entry_name(entry: Any) -> str:
     if isinstance(entry, dict):
         return entry.get("name", "")
     return ""
+def _entry_lang(entry: Any) -> str:
+    """Читает язык из записи (по умолчанию en)."""
+    if isinstance(entry, dict):
+        return entry.get("lang", "en")
+    return "en"
 
-
-def bind(phone: str, line_user_id: str, name: str = "") -> None:
+def bind(
+    phone: str,
+    line_user_id: str,
+    name: str = "",
+    lang: str = "en",
+) -> None:
     """Привязывает телефон к LINE userId, сохраняя имя."""
     key = _normalize(phone)
     existing = _registry.get(key)
     _registry[key] = {
         "user_id": line_user_id,
-        "name": name or _entry_name(existing),  # не затираем имя если уже есть
+        "name": name or _entry_name(existing),
+        "lang": lang or _entry_lang(existing),
     }
     _save()
     logger.info("line_registry: bound phone=%s → user_id=%s name=%r", key, line_user_id, name)
@@ -95,7 +105,58 @@ def get_name(line_user_id: str) -> str:
         if _entry_user_id(entry) == line_user_id:
             return _entry_name(entry)
     return ""
+def get_lang(line_user_id: str) -> str:
+    """Возвращает язык пользователя."""
+    for entry in _registry.values():
+        if _entry_user_id(entry) == line_user_id:
+            return _entry_lang(entry)
+    return "en"
+def get_all_users() -> list[dict]:
+    users = []
 
+    for phone, entry in _registry.items():
 
+        user_id = _entry_user_id(entry)
+
+        if not user_id:
+            continue
+
+        users.append({
+            "phone": phone,
+            "line_user_id": user_id,
+            "name": _entry_name(entry),
+            "lang": _entry_lang(entry),
+        })
+
+    return users
+    """
+    Возвращает список всех зарегистрированных пользователей.
+
+    Формат:
+    [
+        {
+            "phone": "+1234567890",
+            "line_user_id": "Uxxxxxxxx...",
+            "name": "John"
+        },
+        ...
+    ]
+    """
+
+    users = []
+
+    for phone, entry in _registry.items():
+        user_id = _entry_user_id(entry)
+
+        if not user_id:
+            continue
+
+        users.append({
+            "phone": phone,
+            "line_user_id": user_id,
+            "name": _entry_name(entry)
+        })
+
+    return users
 # Загружаем при импорте модуля
 _load()
