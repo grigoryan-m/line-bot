@@ -9,8 +9,10 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, field_validator
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import APIRouter
+
 logger = logging.getLogger(__name__)
 router = APIRouter()
+
 # ─── Секрет для защиты endpoint'а ─────────────────────────────────────────────
 WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET", "")
 
@@ -77,7 +79,7 @@ async def _send_delayed_message(
 
     from utils.line_api import push_text
     text = _build_message(msg_type, lang)
-    
+
     try:
         success = push_text(line_user_id, text)
         if success:
@@ -90,12 +92,9 @@ async def _send_delayed_message(
 
 async def _schedule_all_messages(line_user_id: str, lang: str, order_id: Optional[str], initial_delay: int = THANK_YOU_DELAY):
     """Планирует обе рассылки: через 10 минут и через 24 часа."""
-    # Сообщение 1: Спасибо за покупку
     asyncio.create_task(
         _send_delayed_message(line_user_id, lang, "thank_you", initial_delay, order_id)
     )
-    # Сообщение 2: Ретейшн через сутки после покупки
-    # Если мы вызываем это из flush_pending спустя время, считаем остаток от RETENTION_DELAY
     asyncio.create_task(
         _send_delayed_message(line_user_id, lang, "retention", initial_delay + (RETENTION_DELAY - THANK_YOU_DELAY), order_id)
     )
@@ -115,7 +114,7 @@ def flush_pending(phone: str) -> None:
     for task in tasks:
         elapsed = datetime.now(tz=timezone.utc).timestamp() - task["ts"]
         remaining_thank_you = max(0, THANK_YOU_DELAY - int(elapsed))
-        
+
         asyncio.create_task(
             _schedule_all_messages(line_user_id, task["lang"], task["order_id"], initial_delay=remaining_thank_you)
         )
@@ -161,7 +160,6 @@ async def odoo_purchase(
         })
         return JSONResponse(status_code=202, content={"status": "queued"})
 
-    # Планируем обе рассылки
     await _schedule_all_messages(line_user_id, payload.lang, payload.order_id)
 
     return JSONResponse(
@@ -178,12 +176,14 @@ async def odoo_purchase(
 async def health():
     return {"status": "ok"}
 
+
 class BroadcastRequest(BaseModel):
     text: str
     photo: str | None = None
     video: str | None = None
     lang: str | None = None
     delay: float = 0.05
+
 
 @router.post("/broadcast")
 async def broadcast(
@@ -251,3 +251,89 @@ async def broadcast(
         "failed": failed,
         "total": sent + failed,
     }
+
+
+class BroadcastRequestList(BaseModel):
+    phones: list[str]
+    text: str
+    photo: Optional[str] = None 
+    video: Optional[str] = None  
+    lang: Optional[str] = None    
+    delay: float = 0.05
+
+
+@router.post("/broadcastlist")
+async def broadcast_list(
+    payload: BroadcastRequestList,
+    x_api_key: Optional[str] = Header(default=None, alias="X-API-Key"),
+):
+    if WEBHOOK_SECRET and x_api_key != WEBHOOK_SECRET:
+        raise HTTPException(status_code=401, detail="Invalid or missing X-API-Key")
+
+    if not payload.text.strip():
+        raise HTTPException(status_code=400, detail="text must not be empty")
+
+    from utils.line_registry import get_user_id, _registry, _normalize, _entry_lang
+    from utils.line_api import push_text, push_image, push_video
+
+    sent = 0
+    failed = 0
+    targets: list[str] = [] 
+
+    for phone in payload.phones:
+        normalized = _normalize(phone)
+        entry = _registry.get(normalized)
+
+        if entry is None:
+            logger.warning("broadcastlist: phone not found — %s", phone)
+            failed += 1
+            continue
+
+        line_user_id = get_user_id(normalized)
+        if not line_user_id:
+            failed += 1
+            continue
+
+        if payload.lang is not None and _entry_lang(entry) != payload.lang:
+            continue
+
+        targets.append(line_user_id)
+
+    for line_user_id in targets:
+        try:
+            ok = True
+
+            if payload.photo:
+                ok &= push_image(line_user_id, payload.photo)
+
+            if payload.video:
+                preview = payload.photo or "https://dummyimage.com/640x360/cccccc/000000.jpg&text=Video"
+                ok &= push_video(line_user_id, payload.video, preview)
+
+            ok &= push_text(line_user_id, payload.text)
+
+            if ok:
+                sent += 1
+                logger.info("broadcastlist: sent to line_user_id=%s", line_user_id)
+            else:
+                failed += 1
+                logger.warning("broadcastlist: partial fail for line_user_id=%s", line_user_id)
+
+        except Exception as exc:
+            failed += 1
+            logger.warning("broadcastlist: exception for line_user_id=%s — %s", line_user_id, exc)
+
+        if payload.delay > 0:
+            await asyncio.sleep(payload.delay)
+
+    logger.info("broadcastlist: done. sent=%d failed=%d", sent, failed)
+
+    return JSONResponse(
+        status_code=200,
+        content={
+            "status": "done",
+            "sent": sent,
+            "failed": failed,
+            "total": sent + failed,
+        },
+    )
