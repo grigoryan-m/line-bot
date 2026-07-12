@@ -16,7 +16,7 @@ from utils.odoo import register_customer, get_loyalty_card
 from utils.api_client import register_channel
 from utils.line_registry import bind as registry_bind, get_phone, get_name
 from webhook_api import flush_pending                    # ← новое
-from config import PIXEL_ID, ACCESS_TOKEN
+from config import PIXEL_ID, ACCESS_TOKEN, META_TEST_EVENT_CODE
 
 logger = logging.getLogger(__name__)
 
@@ -234,7 +234,15 @@ async def _finalize(user_id: str, lang: str):
     # Идентично Telegram-боту (handlers/loyalty.py): вызываются сразу после
     # успешной регистрации в Odoo, до отправки ответа пользователю.
     fbclid = ud.get_fbclid(user_id)
-    send_meta_ads_info(phone, user_id, fbclid)
+    clickid = ud.get_binom_clickid(user_id)
+    send_meta_ads_info(
+        phone,
+        user_id,
+        fbclid,
+        event_id=clickid,
+        name=name,
+        country=country,
+    )
     fire_binom_postback(user_id)
 
     if api_message:
@@ -262,31 +270,89 @@ def fire_binom_postback(user_id: str):
         logger.error(f"[binom] postback error: {e}")
 
 
-def send_meta_ads_info(phone: str, user_id: str = "", fbclid: str = None):
-    """Send Lead event to Meta Ads Manager (CAPI). Аналог Telegram-бота."""
+def _hash(value: str) -> str:
+    """Нормализация + SHA-256, как того требует Meta (lowercase, без пробелов по краям)."""
+    return hashlib.sha256(value.strip().lower().encode("utf-8")).hexdigest()
+
+
+def _normalize_phone_for_hash(phone: str) -> str:
+    """Meta требует телефон без '+', пробелов и дефисов перед хэшированием, только цифры с кодом страны."""
+    return re.sub(r"\D", "", phone)
+
+
+def send_meta_ads_info(
+    phone: str,
+    user_id: str = "",
+    fbclid: str = None,
+    event_id: str = None,
+    name: str = None,
+    country: str = None,
+):
+    """
+    Отправляет событие Lead в Meta Conversions API. Аналог Telegram-бота.
+
+    Чем больше валидных параметров user_data передано и чем точнее они
+    нормализованы перед хэшированием — тем выше Event Match Quality (EMQ)
+    в Events Manager, и тем точнее Meta сможет находить похожую аудиторию
+    (lookalike) под цель кампании "Лиды".
+    """
     user_data = {
-        "ph": hashlib.sha256(phone.encode()).hexdigest(),
-        "external_id": hashlib.sha256(str(user_id).encode()).hexdigest()
+        "ph": [_hash(_normalize_phone_for_hash(phone))],
+        "external_id": [_hash(str(user_id))],
     }
+
+    # fbc — обязателен для связки клика по рекламе с конверсией.
+    # Формат: fb.<subdomain_index>.<creation_time>.<fbclid>
     if fbclid:
         user_data["fbc"] = f"fb.1.{int(time.time())}.{fbclid}"
+
+    # Имя/фамилия — весомые сигналы для матчинга с профилем в Meta.
+    if name:
+        parts = name.strip().split(maxsplit=1)
+        if parts and parts[0]:
+            user_data["fn"] = [_hash(parts[0])]
+        if len(parts) > 1 and parts[1]:
+            user_data["ln"] = [_hash(parts[1])]
+
+    # Страна — учитывается только если это уже ISO-код (th, ru, ...).
+    # Если у вас в форме свободный текст (Thailand/Таиланд) —
+    # матчинг по country будет слабым, лучше сначала привести к ISO 3166-1 alpha-2.
+    if country and re.fullmatch(r"[A-Za-z]{2}", country.strip()):
+        user_data["country"] = [_hash(country)]
 
     payload = {
         "data": [
             {
                 "event_name": "Lead",
                 "event_time": int(time.time()),
-                "action_source": "system_generated",
-                "user_data": user_data
+                # event_id должен быть уникальным на конверсию, чтобы не словить
+                # случайную дедупликацию, если когда-нибудь добавите Pixel на сайте
+                "event_id": event_id or f"lead_{user_id}_{int(time.time())}",
+                # "chat" точнее описывает канал (LINE-бот), чем "system_generated"
+                "action_source": "chat",
+                "user_data": user_data,
             }
         ]
     }
+
+    # Позволяет проверять события в Events Manager -> Test Events до запуска в прод
+    if META_TEST_EVENT_CODE:
+        payload["test_event_code"] = META_TEST_EVENT_CODE
+
     try:
         response = requests.post(
             META_ADS_URL,
             params={"access_token": ACCESS_TOKEN},
-            json=payload
+            json=payload,
+            timeout=10,
         )
-        logger.info(f"Meta Ads response: {response.json()}")
+        data = response.json()
+        if "error" in data:
+            logger.error(f"Meta CAPI error: {data['error']}")
+        else:
+            logger.info(
+                f"Meta CAPI ok: events_received={data.get('events_received')} "
+                f"fbtrace_id={data.get('fbtrace_id')}"
+            )
     except Exception as e:
         logger.error(f"Failed to send Meta Ads event: {e}")
