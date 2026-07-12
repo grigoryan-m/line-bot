@@ -40,3 +40,5 @@ TWILIO_MESSAGING_SERVICE_SID = os.getenv("TWILIO_MESSAGING_SERVICE_SID", "")
 # ── Meta Ads Manager ──────────────────────────────────────────────────────────
 PIXEL_ID = os.getenv("META_ADS_PIXEL_ID", "")
 ACCESS_TOKEN = os.getenv("META_ADS_ACCESS_TOKEN", "")
+# Код тестового события из Events Manager -> Test Events (оставить пустым в проде)
+META_TEST_EVENT_CODE = os.getenv("META_ADS_TEST_EVENT_CODE", "")
