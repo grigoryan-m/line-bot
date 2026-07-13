@@ -20,6 +20,10 @@ _REGISTRY_PATH = os.path.join(os.path.dirname(__file__), "../data/line_registry.
 # Старые записи в формате строки поддерживаются для обратной совместимости.
 _registry: dict[str, Any] = {}
 
+# Префикс временного ключа для привязки "до регистрации" (пока не известен
+# реальный номер телефона) — аналог "tg:<user_id>" в Telegram-боте.
+TEMP_PREFIX = "line:"
+
 
 def _normalize(phone: str) -> str:
     """Убирает пробелы и приводит к формату +XXXXXXXXXXX."""
@@ -76,6 +80,15 @@ def bind(
 ) -> None:
     """Привязывает телефон к LINE userId, сохраняя имя."""
     key = _normalize(phone)
+
+    # Если привязываем настоящий телефон — удаляем временную запись
+    # "line:<user_id>", созданную ensure_bound() при первом контакте,
+    # чтобы не оставалось двух записей на одного и того же пользователя.
+    if not key.startswith(TEMP_PREFIX):
+        temp_key = f"{TEMP_PREFIX}{line_user_id}"
+        if temp_key != key:
+            _registry.pop(temp_key, None)
+
     existing = _registry.get(key)
     _registry[key] = {
         "user_id": line_user_id,
@@ -97,6 +110,23 @@ def get_phone(line_user_id: str) -> Optional[str]:
         if _entry_user_id(entry) == line_user_id:
             return phone
     return None
+
+
+def ensure_bound(user_id: str) -> None:
+    """
+    Гарантирует, что у LINE userId есть хоть какая-то запись в реестре.
+
+    Если реального телефона ещё нет — привязывает временный ключ
+    "line:<user_id>". Как только становится известен настоящий номер
+    (см. handlers/loyalty.py: _process_phone / _finalize), bind()
+    автоматически удалит временную запись и заменит её на реальную.
+
+    Если реальный телефон уже привязан — ничего не делает.
+    """
+    existing = get_phone(user_id)
+    if existing and not existing.startswith(TEMP_PREFIX):
+        return
+    bind(f"{TEMP_PREFIX}{user_id}", user_id)
 
 
 def get_name(line_user_id: str) -> str:

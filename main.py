@@ -28,6 +28,7 @@ from contextlib import asynccontextmanager
 from config import LINE_CHANNEL_SECRET
 from utils import user_data as ud
 from utils.api_client import register_channel
+from utils.line_registry import ensure_bound
 
 # Handlers
 from handlers.start import handle_start, handle_lang_select, handle_main_menu
@@ -220,6 +221,22 @@ async def webhook(request: Request, x_line_signature: str = Header(None)):
 
         if not user_id:
             continue
+
+        # Привязываем LINE userId при ЛЮБОМ действии пользователя,
+        # КРОМЕ первого захода (follow) и команды /start — её
+        # намеренно игнорируем, аналогично Telegram-боту.
+        is_start_trigger = event_type == "follow"
+        if event_type == "message" and event.get("message", {}).get("type") == "text":
+            _text = event["message"].get("text", "").strip().lower()
+            if (
+                _text in {"/start", "start"}
+                or _text.startswith("/start ")
+                or _text.startswith("start ")
+            ):
+                is_start_trigger = True
+
+        if not is_start_trigger:
+            ensure_bound(user_id)
 
         if event_type == "message":
             message = event.get("message", {})
